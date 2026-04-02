@@ -1,0 +1,65 @@
+.star-border-container {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  border-radius: inherit;
+  box-sizing: border-box;
+}
+
+.inner-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: inherit;
+  border-radius: inherit;
+  box-sizing: border-box;
+}
+
+.border-gradient-bottom,
+.border-gradient-top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.border-gradient-bottom {
+  bottom: 0;
+}
+
+.border-gradient-top {
+  top: 0;
+}
+
+.border-gradient-track {
+  width: 200%;
+  height: 100%;
+  animation-name: star-border-slide-x;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce), (update: slow) {
+  .border-gradient-track {
+    animation: none !important;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes star-border-slide-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}

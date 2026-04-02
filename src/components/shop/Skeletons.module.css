@@ -1,0 +1,114 @@
+.pulse {
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.shopGrid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .shopGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .shopGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cardImage {
+  aspect-ratio: 4 / 3;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cardBody {
+  padding: 1rem 1.15rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.line {
+  height: 0.75rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.lineShort {
+  width: 40%;
+}
+
+.lineTitle {
+  width: 75%;
+  height: 1rem;
+}
+
+.linePrice {
+  width: 30%;
+}
+
+.productLayout {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .productLayout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.productImage {
+  aspect-ratio: 1;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.productLines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.productLineLg {
+  height: 1.75rem;
+  width: 70%;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.productLineMd {
+  height: 1rem;
+  width: 40%;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.productPara {
+  height: 5rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}

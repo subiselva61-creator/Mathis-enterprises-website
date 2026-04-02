@@ -1,0 +1,48 @@
+.glass-card {
+  position: relative;
+  width: 100%;
+  border-radius: var(--gc-border-radius, 30px);
+  color: var(--gc-color, #ffffff);
+  transform: scale(1);
+  transition: transform 0.2s ease;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.glass-card:hover {
+  transform: scale(var(--gc-hover-scale, 1));
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: var(--gc-border-size, 0px) solid color-mix(in srgb, var(--gc-border-color, #ffffff) calc(var(--gc-border-opacity, 0.4) * 100%), transparent);
+  background: color-mix(in srgb, var(--gc-background-color, #000000) calc(var(--gc-background-opacity, 0) * 100%), transparent);
+  backdrop-filter: blur(var(--gc-blur, 15px)) saturate(var(--gc-saturation, 199%)) brightness(var(--gc-brightness, 131%));
+  -webkit-backdrop-filter: blur(var(--gc-blur, 15px)) saturate(var(--gc-saturation, 199%)) brightness(var(--gc-brightness, 131%));
+  box-shadow:
+    inset 0 0 var(--gc-inner-light-blur, 10px) calc(var(--gc-inner-light-spread, 1) * 1px) color-mix(in srgb, var(--gc-inner-light-color, #ffffff) calc(var(--gc-inner-light-opacity, 0) * 100%), transparent),
+    0 0 var(--gc-outer-light-blur, 10px) calc(var(--gc-outer-light-spread, 1) * 1px) color-mix(in srgb, var(--gc-outer-light-color, #ffffff) calc(var(--gc-outer-light-opacity, 0) * 100%), transparent);
+  z-index: 0;
+}
+
+.glass-card::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--gc-distortion, 46px) / 18);
+  border-radius: inherit;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 35%);
+  filter: blur(calc(var(--gc-distortion, 46px) / 8));
+  transform: translateZ(0);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass-card-inner {
+  position: relative;
+  z-index: 1;
+  border-radius: inherit;
+  filter: saturate(1) brightness(1);
+}

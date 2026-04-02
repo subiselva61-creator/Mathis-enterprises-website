@@ -1,0 +1,46 @@
+.footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(6, 6, 12, 0.95);
+  padding: 2.5rem 1.25rem 2rem;
+}
+
+.inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ece9ff;
+  margin-bottom: 0.75rem;
+}
+
+.brandMark {
+  flex-shrink: 0;
+  width: auto;
+  height: 2.5rem;
+}
+
+.brandName {
+  line-height: 1.2;
+}
+
+.note {
+  font-size: 0.875rem;
+  color: #8c88b0;
+  max-width: 36rem;
+  margin: 0 auto 1.25rem;
+  line-height: 1.55;
+}
+
+.copy {
+  font-size: 0.8rem;
+  color: #6b6788;
+}

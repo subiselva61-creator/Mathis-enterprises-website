@@ -1,0 +1,55 @@
+.section {
+  padding-top: 1rem;
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.sectionLink {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #c4b5fd;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.sectionLink:focus-visible {
+  outline: 2px solid #8b7cff;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.item {
+  min-height: 100%;
+}

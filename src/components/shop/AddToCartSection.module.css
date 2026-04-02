@@ -1,0 +1,92 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.qtyRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.qtyLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #b4afd9;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.stepBtn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background: transparent;
+  color: #e8e4ff;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stepBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.stepBtn:focus-visible {
+  outline: 2px solid #8b7cff;
+  outline-offset: -2px;
+}
+
+.qtyInput {
+  width: 3rem;
+  text-align: center;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  -moz-appearance: textfield;
+}
+
+.qtyInput::-webkit-outer-spin-button,
+.qtyInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qtyInput:focus-visible {
+  outline: 2px solid #8b7cff;
+  outline-offset: -2px;
+}
+
+.addBtn {
+  min-width: 200px;
+}
+
+.toast,
+.toastVisible {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #a7f3d0;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  min-height: 1.25rem;
+}
+
+.toastVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
