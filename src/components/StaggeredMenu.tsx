@@ -139,6 +139,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     const layers = preLayerElsRef.current;
     if (!panel) return null;
 
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     openTlRef.current?.kill();
     if (closeTweenRef.current) {
       closeTweenRef.current.kill();
@@ -181,18 +185,36 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     if (itemEls.length) {
       const itemsStartRatio = 0.15;
       const itemsStart = panelInsertTime + panelDuration * itemsStartRatio;
+      const itemDuration = reduceMotion ? 0.05 : 0.52;
+      const staggerEach = reduceMotion
+        ? 0
+        : Math.min(0.07, 0.42 / Math.max(1, itemEls.length));
 
       tl.to(
         itemEls,
-        { yPercent: 0, rotate: 0, duration: 1, ease: 'power4.out', stagger: { each: 0.1, from: 'start' } },
+        {
+          yPercent: 0,
+          rotate: 0,
+          duration: itemDuration,
+          ease: reduceMotion ? "none" : "power3.out",
+          stagger: { each: staggerEach, from: "start" },
+          onComplete: () => {
+            if (!reduceMotion) gsap.set(itemEls, { clearProps: "willChange" });
+          },
+        },
         itemsStart
       );
 
       if (numberEls.length) {
         tl.to(
           numberEls,
-          { duration: 0.6, ease: "power2.out", ...smNumOpacityVars(1), stagger: { each: 0.08, from: "start" } },
-          itemsStart + 0.1
+          {
+            duration: reduceMotion ? 0.05 : 0.38,
+            ease: reduceMotion ? "none" : "power2.out",
+            ...smNumOpacityVars(1),
+            stagger: { each: reduceMotion ? 0 : 0.05, from: "start" },
+          },
+          itemsStart + (reduceMotion ? 0 : 0.06)
         );
       }
     }
@@ -200,21 +222,26 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     if (socialTitle || socialLinks.length) {
       const socialsStart = panelInsertTime + panelDuration * 0.4;
 
-      if (socialTitle) tl.to(socialTitle, { opacity: 1, duration: 0.5, ease: 'power2.out' }, socialsStart);
+      if (socialTitle)
+        tl.to(
+          socialTitle,
+          { opacity: 1, duration: reduceMotion ? 0.05 : 0.35, ease: reduceMotion ? "none" : "power2.out" },
+          socialsStart
+        );
       if (socialLinks.length) {
         tl.to(
           socialLinks,
           {
             y: 0,
             opacity: 1,
-            duration: 0.55,
-            ease: 'power3.out',
-            stagger: { each: 0.08, from: 'start' },
+            duration: reduceMotion ? 0.05 : 0.4,
+            ease: reduceMotion ? "none" : "power3.out",
+            stagger: { each: reduceMotion ? 0 : 0.05, from: "start" },
             onComplete: () => {
-              gsap.set(socialLinks, { clearProps: 'opacity' });
-            }
+              gsap.set(socialLinks, { clearProps: "opacity" });
+            },
           },
-          socialsStart + 0.04
+          socialsStart + (reduceMotion ? 0 : 0.04)
         );
       }
     }
@@ -531,15 +558,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <aside
           id="staggered-menu-panel"
           ref={panelRef}
-          className="staggered-menu-panel absolute top-0 right-0 z-10 flex h-full flex-col bg-white backdrop-blur-[12px] pointer-events-auto overflow-y-auto"
-          style={{ WebkitBackdropFilter: 'blur(12px)' }}
+          className="staggered-menu-panel absolute top-0 right-0 z-10 flex h-full flex-col bg-[#fbfbfd] pointer-events-auto overflow-y-auto"
           aria-hidden={!open}
         >
           <div className="sm-panel-inner flex min-h-0 flex-1 flex-col">
             {/* Two full-width layers (avoids 200% flex column rounding / clipping with overflow-x on body) */}
             <div className="relative min-h-0 flex-1 overflow-hidden">
               <div
-                className={`sm-panel-layer-root absolute inset-0 flex flex-col overflow-y-auto transition-transform duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+                className={`sm-panel-layer-root absolute inset-0 flex flex-col overflow-y-auto transition-transform duration-200 ease-out motion-reduce:transition-none ${
                   drilledIndex === null ? "translate-x-0" : "-translate-x-full"
                 }`}
               >
@@ -648,7 +674,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               </div>
 
               <div
-                className={`sm-panel-layer-drill absolute inset-0 flex flex-col overflow-y-auto pl-0 transition-transform duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+                className={`sm-panel-layer-drill absolute inset-0 flex flex-col overflow-y-auto pl-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${
                   drilledIndex === null ? "translate-x-full pointer-events-none" : "translate-x-0"
                 }`}
                 aria-hidden={drilledIndex === null}
@@ -745,7 +771,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 .sm-scope .sm-panel-itemWrap { position: relative; overflow: visible; line-height: 1; }
 .sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
 .sm-scope .sm-line { display: none !important; }
-.sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(260px, 38vw, 420px); height: 100%; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em max(1.25rem, env(safe-area-inset-right, 0px)) 2em max(1.25rem, env(safe-area-inset-left, 0px)); overflow-y: auto; z-index: 10; scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box; }
+.sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(260px, 38vw, 420px); height: 100%; background: #fbfbfd; display: flex; flex-direction: column; padding: 6em max(1.25rem, env(safe-area-inset-right, 0px)) 2em max(1.25rem, env(safe-area-inset-left, 0px)); overflow-y: auto; z-index: 10; scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box; }
 .sm-scope .staggered-menu-panel::-webkit-scrollbar { display: none; }
 .sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
 .sm-scope .sm-prelayers { position: absolute; top: 0; right: 0; bottom: 0; width: clamp(260px, 38vw, 420px); pointer-events: none; z-index: 5; }

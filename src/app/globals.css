@@ -36,8 +36,6 @@ body {
   font-family: var(--font-sans, "Helvetica Neue", Helvetica, Arial, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fff;
-  color: #1d1d1f;
 }
 
 .site-shell {
@@ -169,7 +167,8 @@ a {
   max-width: 40rem;
 }
 
-html {
+html,
+body.app-root {
   color-scheme: light;
 }
 
@@ -252,10 +251,6 @@ html {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-  }
   html {
     font-family: var(--font-sans, "Helvetica Neue", Helvetica, Arial, sans-serif);
   }
@@ -274,4 +269,55 @@ html {
   width: 0;
   height: 0;
   display: none;
+}
+
+/*
+ * Single source of truth for the page chrome. Keeps `npm run dev` and `npm start`
+ * visually aligned: layered vs unlayered CSS can order differently after the build.
+ */
+html {
+  background-color: #fff;
+}
+
+body.app-root {
+  background-color: #fff;
+  color: #1d1d1f;
+}
+
+/* Temporary: public storefront hidden on desktop (≥768px); see DesktopMobileGate */
+.desktop-viewing-notice {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .storefront-mobile-only {
+    display: none !important;
+  }
+
+  .desktop-viewing-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem;
+    min-height: 100dvh;
+    padding: 2rem;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #1d1d1f;
+  }
+
+  .desktop-viewing-notice__title {
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .desktop-viewing-notice__text {
+    font-size: 1rem;
+    line-height: 1.5;
+    max-width: 28rem;
+    color: #424245;
+  }
 }

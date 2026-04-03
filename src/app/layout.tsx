@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart/cart-context";
@@ -6,9 +6,15 @@ import { getMergedProducts } from "@/lib/catalog";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SiteScrollExperience from "@/components/motion/SiteScrollExperience";
+import DesktopMobileGate from "@/components/layout/DesktopMobileGate";
 
 /** Merged catalog reads Supabase; must not freeze at build time. */
 export const dynamic = "force-dynamic";
+
+/** Force light chrome (scrollbars, form controls) regardless of system appearance. */
+export const viewport: Viewport = {
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   title: {
@@ -33,27 +39,29 @@ export default async function RootLayout({
   const products = await getMergedProducts();
   return (
     <html lang="en" className={dmSans.variable}>
-      <body>
-        <a href="#main-content" className="skip-link">
-          Skip to content
-        </a>
-        <div className="site-shell">
-          <CartProvider
-            catalog={products.map((p) => ({
-              id: p.id,
-              price: p.price,
-              priceOnRequest: p.priceOnRequest,
-            }))}
-          >
-            <SiteHeader />
-            <SiteScrollExperience>
-              <main id="main-content" className="main main--apple" tabIndex={-1}>
-                {children}
-              </main>
-              <SiteFooter />
-            </SiteScrollExperience>
-          </CartProvider>
-        </div>
+      <body className="app-root">
+        <DesktopMobileGate>
+          <a href="#main-content" className="skip-link">
+            Skip to content
+          </a>
+          <div className="site-shell">
+            <CartProvider
+              catalog={products.map((p) => ({
+                id: p.id,
+                price: p.price,
+                priceOnRequest: p.priceOnRequest,
+              }))}
+            >
+              <SiteHeader />
+              <SiteScrollExperience>
+                <main id="main-content" className="main main--apple" tabIndex={-1}>
+                  {children}
+                </main>
+                <SiteFooter />
+              </SiteScrollExperience>
+            </CartProvider>
+          </div>
+        </DesktopMobileGate>
       </body>
     </html>
   );
