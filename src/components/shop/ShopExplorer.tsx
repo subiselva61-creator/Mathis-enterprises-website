@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { gsap } from "gsap";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Product } from "@/data/products";
 import { categories } from "@/data/products";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { registerScrollTrigger, ScrollTrigger } from "@/lib/gsap/registerScrollTrigger";
 import ProductCard from "./ProductCard";
 import styles from "./ShopExplorer.module.css";
 
@@ -33,6 +36,8 @@ function normalizeInitialQuery(raw: string | null | undefined): string {
 }
 
 export default function ShopExplorer({ products, initialCategory, initialQuery }: Props) {
+  const reducedMotion = usePrefersReducedMotion();
+  const gridRef = useRef<HTMLUListElement>(null);
   const [query, setQuery] = useState(() => normalizeInitialQuery(initialQuery ?? null));
   const [category, setCategory] = useState<(typeof categories)[number]>(() =>
     normalizeInitialCategory(initialCategory ?? null),
@@ -56,9 +61,41 @@ export default function ShopExplorer({ products, initialCategory, initialQuery }
     return next;
   }, [products, query, category, sort]);
 
+  const filterKey = useMemo(() => filtered.map((p) => p.id).join(","), [filtered]);
+
+  useLayoutEffect(() => {
+    if (reducedMotion) return;
+    const ul = gridRef.current;
+    if (!ul || filtered.length === 0) return;
+    registerScrollTrigger();
+    const ctx = gsap.context(() => {
+      ul.querySelectorAll<HTMLElement>("[data-scroll-shop-item]").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { autoAlpha: 0, y: 32, x: i % 2 === 0 ? -8 : 8 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            x: 0,
+            duration: 0.58,
+            ease: "power2.out",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: el,
+              start: "top 91%",
+              once: true,
+            },
+          },
+        );
+      });
+    }, ul);
+    ScrollTrigger.refresh();
+    return () => ctx.revert();
+  }, [filterKey, filtered.length, reducedMotion]);
+
   return (
     <div className={styles.wrap}>
-      <div className={styles.toolbar} role="search">
+      <div className={styles.toolbar} role="search" data-scroll-shop-toolbar>
         <label className={styles.field}>
           <span className={styles.label}>Search</span>
           <input
@@ -102,9 +139,9 @@ export default function ShopExplorer({ products, initialCategory, initialQuery }
       {filtered.length === 0 ? (
         <p className={styles.empty}>No products match your filters. Try another search or category.</p>
       ) : (
-        <ul className={styles.grid}>
+        <ul ref={gridRef} className={styles.grid} data-scroll-stagger-root>
           {filtered.map((p) => (
-            <li key={p.id} className={styles.item}>
+            <li key={p.id} className={styles.item} data-scroll-shop-item>
               <ProductCard product={p} />
             </li>
           ))}

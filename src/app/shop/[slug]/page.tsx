@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import AddToCartSection from "@/components/shop/AddToCartSection";
-import { getProductBySlug, products } from "@/data/products";
+import { staticProductSlugs } from "@/data/products";
+import { getMergedProductBySlug } from "@/lib/catalog";
 import { formatProductPrice } from "@/lib/format";
 import styles from "./product.module.css";
 
@@ -13,12 +13,12 @@ const RED_PARTITION_BRICK_SLUG = "rectangular-red-partition-wall-bricks";
 type Props = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+  return staticProductSlugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getMergedProductBySlug(slug);
   if (!product) return { title: "Product" };
   return {
     title: product.name,
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getMergedProductBySlug(slug);
   if (!product) notFound();
 
   const [primary, ...rest] = product.images;
@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: Props) {
             Rectangular Red Partition Wall Bricks
           </h1>
           <p className={styles.appleHeroSubtitle}>Build with strength. Design with style.</p>
-          <div className={styles.appleHeroFigure}>
+          <div className={styles.appleHeroFigure} data-scroll-pdp-hero>
             <Image
               src="/red-bricks-2.png"
               alt="Rectangular red partition wall bricks presented for construction use"
@@ -66,7 +66,7 @@ export default async function ProductPage({ params }: Props) {
       >
         {!isRedPartitionBrickHero ? (
           <div className={styles.media}>
-            <div className={styles.heroImage}>
+            <div className={styles.heroImage} data-scroll-pdp-hero>
               <div className={styles.heroImagePad}>
                 <Image
                   src={primary}
@@ -101,6 +101,7 @@ export default async function ProductPage({ params }: Props) {
         ) : null}
         <div
           className={styles.detail}
+          data-scroll-pdp-detail
           id={isRedPartitionBrickHero ? "red-brick-details" : undefined}
         >
           <p className={styles.category}>{product.category}</p>
@@ -137,13 +138,12 @@ export default async function ProductPage({ params }: Props) {
               </dl>
             </div>
           ) : null}
-          {product.indiaMartUrl ? (
-            <p className={styles.imCta}>
-              <Link href={product.indiaMartUrl} className={styles.imLink} target="_blank" rel="noopener noreferrer">
-                Get best quote on IndiaMART
-              </Link>
-            </p>
-          ) : null}
+          <p className={styles.imCta}>
+            For bulk order and price negotiation call
+            <a href="tel:+917845583158" className={styles.imLink}>
+              +91 78455 83158
+            </a>
+          </p>
           <p className={styles.tags}>
             <span className={styles.tagsLabel}>Tags </span>
             {product.tags.join(", ")}

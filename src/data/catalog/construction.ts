@@ -42,7 +42,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Piece",
     moq: "500 Piece",
-    images: ["/wire-cut-bricks-2.png"],
+    images: ["/wire-cut-bricks-main.png"],
     category: cat,
     tags: [...t, "bricks", "wire cut", "clay"],
     specs: [
@@ -65,7 +65,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Piece",
     moq: "1000 Piece",
-    images: im("Partition Wall Fly Ash Bricks"),
+    images: ["/BG removed/Partition Wall Fly Ash Bricks Background Removed.png"],
     category: cat,
     tags: [...t, "fly ash", "partition"],
     specs: [
@@ -114,7 +114,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Piece",
     moq: "500 Piece",
-    images: im("Fly Ash Bricks"),
+    images: ["/BG removed/Fly Ash Bricks Background Removed.png"],
     category: cat,
     tags: [...t, "fly ash", "side walls"],
     specs: [
@@ -137,7 +137,9 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Piece",
     moq: "500 Piece",
-    images: im("Cellocon AAC Blocks"),
+    images: [
+      "/BG removed/cellocon-aac-blocks-500x500 Background Removed.png",
+    ],
     category: cat,
     tags: [...t, "AAC", "Cellocon"],
     specs: [
@@ -161,7 +163,7 @@ export const constructionProducts: Product[] = [
     price: 12.5,
     currency: "INR",
     priceBasis: "Piece",
-    images: ["/wire-cut-bricks-2.png"],
+    images: ["/wire-cut-bricks-main.png"],
     category: cat,
     tags: [...t, "wire cut", "clay"],
     specs: [
@@ -183,7 +185,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "10 Cubic Feet",
-    images: im("Gray A Grade M Sand"),
+    images: ["/BG removed/Gray A Grade M Sand Background Removed.png"],
     category: cat,
     tags: [...t, "M sand", "manufactured sand"],
     specs: [
@@ -206,7 +208,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Meter",
     moq: "5 Cubic Meter",
-    images: im("M 20 Construction Ready Mix Concrete"),
+    images: ["/m-20-construction-ready-mix-concrete.jpg"],
     category: cat,
     tags: [...t, "RMC", "concrete", "M20"],
     specs: [
@@ -228,7 +230,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "10 Cubic Feet",
-    images: ["/brown-a1-grade-m-sand.png"],
+    images: ["/BG removed/Brown A1 Grade M Sand.png"],
     category: cat,
     tags: [...t, "M sand", "A1 grade"],
     specs: [
@@ -251,7 +253,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "50 Cubic Feet",
-    images: im("Gray Construction M Sand"),
+    images: ["/BG removed/Gray Construction M Sand Background Removed.png"],
     category: cat,
     tags: [...t, "M sand"],
     specs: [
@@ -273,7 +275,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Piece",
     moq: "3000 Piece",
-    images: im("Construction Red Brick"),
+    images: ["/BG removed/construction red bricks Background Removed.png"],
     category: cat,
     tags: [...t, "clay brick", "red brick"],
     specs: [
@@ -296,7 +298,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "15 Cubic Feet",
-    images: im("40 mm Construction Aggregate"),
+    images: ["/BG removed/40-mm-aggregate-1000x1000 Background Removed.png"],
     category: cat,
     tags: [...t, "aggregate", "40mm"],
     specs: [
@@ -318,7 +320,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "10 Cubic Feet",
-    images: im("20mm Construction Aggregate"),
+    images: ["/BG removed/20mm-aggregate-1000x1000 Background Removed.png"],
     category: cat,
     tags: [...t, "aggregate", "20mm"],
     specs: [
@@ -339,7 +341,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "15 Cubic Feet",
-    images: im("12mm Construction Aggregate"),
+    images: ["/BG removed/12mm-aggregate-500x500 Background Removed.png"],
     category: cat,
     tags: [...t, "aggregate", "12mm"],
     specs: [
@@ -361,7 +363,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "5 Cubic Feet",
-    images: im("Construction Grey P Sand"),
+    images: ["/BG removed/p-sand-500x500 Background Removed.png"],
     category: cat,
     tags: [...t, "P sand", "plaster"],
     specs: [
@@ -384,7 +386,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "50 Cubic Feet",
-    images: im("Brown Construction Filling Sand"),
+    images: ["/BG removed/Brown filling sand Background Removed.png"],
     category: cat,
     tags: [...t, "filling sand"],
     specs: [
@@ -405,7 +407,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "10 Cubic Feet",
-    images: im("6mm Construction Aggregate"),
+    images: ["/BG removed/6mm-aggregate-500x500 Background Removed.png"],
     category: cat,
     tags: [...t, "aggregate", "6mm"],
     specs: [
@@ -427,7 +429,7 @@ export const constructionProducts: Product[] = [
     currency: "INR",
     priceBasis: "Cubic Feet",
     moq: "5 Cubic Feet",
-    images: im("Brown Filling Sand"),
+    images: ["/BG removed/brown filling sand-2 Background Removed.png"],
     category: cat,
     tags: [...t, "filling sand"],
     specs: [

@@ -21,6 +21,7 @@ const columns: { title: string; links: { href: string; label: string; external?:
     title: "Company",
     links: [
       { href: "/", label: "Mathi Enterprises" },
+      { href: "/contact", label: "Contact" },
       { href: IM_PROFILE, label: "IndiaMART storefront", external: true },
       { href: "/shop", label: "Request quote (via catalog)" },
     ],
@@ -30,8 +31,6 @@ const columns: { title: string; links: { href: string; label: string; external?:
     links: [
       { href: `/shop?cat=${encodeURIComponent("Construction Materials")}`, label: "Construction materials" },
       { href: `/shop?cat=${encodeURIComponent("Cement")}`, label: "Cement" },
-      { href: `/shop?cat=${encodeURIComponent("TMT Bars")}`, label: "TMT bars" },
-      { href: `/shop?cat=${encodeURIComponent("Plots & land")}`, label: "Plots & land" },
     ],
   },
   {
@@ -49,7 +48,7 @@ export default function SiteFooter() {
       <div className="mx-auto max-w-[980px] px-4 pb-6 pt-10">
         <div className="grid grid-cols-2 gap-8 border-b border-[#d2d2d7] pb-6 md:grid-cols-4">
           {columns.map((col) => (
-            <div key={col.title}>
+            <div key={col.title} data-scroll-footer-col>
               <h3 className="mb-3 font-semibold text-[#1d1d1f]">{col.title}</h3>
               <ul className="space-y-2">
                 {col.links.map((l) => (
@@ -91,8 +90,11 @@ export default function SiteFooter() {
             GST: 33ACPPV8797A2ZX · Chennai, Tamil Nadu.
           </p>
           <p className="mb-4 leading-relaxed">
-            This storefront uses a local cart on your device only; checkout and payments are not connected. For purchase
-            enquiries, use{" "}
+            You can place a cash-on-delivery order from your{" "}
+            <Link href="/cart" className="text-[#424245] underline">
+              shopping bag
+            </Link>
+            . We confirm the final amount and delivery before dispatch. For other enquiries, use{" "}
             <a href={IM_PROFILE} className="text-[#424245] underline" target="_blank" rel="noopener noreferrer">
               IndiaMART
             </a>{" "}

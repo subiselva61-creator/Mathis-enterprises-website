@@ -11,7 +11,7 @@
 }
 
 .ripple-button:focus-visible {
-  outline: 2px solid #0066cc;
+  outline: 2px solid #0027eb;
   outline-offset: 2px;
 }
 
@@ -21,52 +21,52 @@
 }
 
 .ripple-button--variant-primary {
-  background: #0066cc;
+  background: #0027eb;
   color: #fff;
 }
 
 .ripple-button--variant-primary:hover:not(:disabled) {
-  background: #0077ed;
+  background: #1e46f4;
 }
 
 .ripple-button--variant-secondary {
   background: transparent;
-  color: #0066cc;
-  border-color: #0066cc;
+  color: #0027eb;
+  border-color: #0027eb;
 }
 
 .ripple-button--variant-secondary:hover:not(:disabled) {
-  background: rgba(0, 102, 204, 0.08);
+  background: rgba(0, 39, 235, 0.08);
 }
 
 .ripple-button--variant-outline {
   background: transparent;
-  color: #0066cc;
-  border-color: #0066cc;
+  color: #0027eb;
+  border-color: #0027eb;
 }
 
 .ripple-button--variant-outline:hover:not(:disabled) {
-  background: rgba(0, 102, 204, 0.08);
+  background: rgba(0, 39, 235, 0.08);
 }
 
 .ripple-button--variant-ghost {
   background: transparent;
-  color: #0066cc;
+  color: #0027eb;
   border-color: transparent;
 }
 
 .ripple-button--variant-ghost:hover:not(:disabled) {
-  background: rgba(0, 102, 204, 0.06);
+  background: rgba(0, 39, 235, 0.06);
 }
 
 .ripple-button--variant-default {
   background: transparent;
-  color: #0066cc;
-  border-color: #0066cc;
+  color: #0027eb;
+  border-color: #0027eb;
 }
 
 .ripple-button--variant-default:hover:not(:disabled) {
-  background: rgba(0, 102, 204, 0.08);
+  background: rgba(0, 39, 235, 0.08);
 }
 
 .ripple-button--size-sm {
@@ -109,11 +109,11 @@
 .ripple-button--variant-outline .ripple-button__ripple,
 .ripple-button--variant-secondary .ripple-button__ripple,
 .ripple-button--variant-default .ripple-button__ripple {
-  background: rgba(0, 102, 204, 0.2);
+  background: rgba(0, 39, 235, 0.2);
 }
 
 .ripple-button--variant-ghost .ripple-button__ripple {
-  background: rgba(0, 102, 204, 0.15);
+  background: rgba(0, 39, 235, 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {

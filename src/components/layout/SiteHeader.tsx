@@ -3,19 +3,37 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { Search, ShoppingBag, X } from "lucide-react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Search, ShoppingBag, User, X } from "lucide-react";
 import { gsap } from "gsap";
 import StaggeredMenu from "@/components/StaggeredMenu";
 import { useCart } from "@/components/cart/cart-context";
+import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 import { cn } from "@/lib/utils";
 
 const BRAND_NAME = "Mathi Enterprises";
 
 const centerNav: { href: string; label: string; external?: boolean }[] = [
   { href: "/shop", label: "Catalog" },
+  { href: "/bricks", label: "BRICKS" },
+  { href: "/aggregates", label: "AGGREGATES" },
+  { href: "/sand", label: "SAND" },
+  { href: "/cement", label: "CEMENT" },
+  { href: "/contact", label: "Contact" },
   { href: "https://www.indiamart.com/mathi-enterprises-tamilnadu/", label: "IndiaMART", external: true },
 ];
+
+function UserNavLink({ isSignedIn }: { isSignedIn: boolean }) {
+  return (
+    <Link
+      href={isSignedIn ? "/account" : "/login"}
+      className="relative flex h-10 w-10 items-center justify-center text-[#1d1d1f] opacity-90 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] md:h-9 md:w-9"
+      aria-label={isSignedIn ? "Account" : "Sign in"}
+    >
+      <User className="h-[19px] w-[19px]" strokeWidth={1.5} />
+    </Link>
+  );
+}
 
 function CartBadgeLink() {
   const { itemCount, isReady } = useCart();
@@ -42,12 +60,7 @@ function CartBadgeLink() {
 /** Matches StaggeredMenu mobile prelayer palette (middle tone omitted like sm-prelayers). */
 const SEARCH_OVERLAY_PRELAYERS = ["#e8e8ed", "#c4c4cc"] as const;
 
-const quickLinks: { label: string; href: string; external?: boolean }[] = [
-  { label: "Catalog", href: "/shop" },
-  { label: "Shopping bag", href: "/cart" },
-  { label: "IndiaMART storefront", href: "https://www.indiamart.com/mathi-enterprises-tamilnadu/", external: true },
-  { label: "Home", href: "/" },
-];
+type SearchQuickLink = { label: string; href: string; external?: boolean };
 
 function SearchOpenButton({
   className,
@@ -75,9 +88,11 @@ function SearchOpenButton({
 function AppleStyleSearchOverlay({
   open,
   onClose,
+  quickLinks,
 }: {
   open: boolean;
   onClose: () => void;
+  quickLinks: SearchQuickLink[];
 }) {
   const router = useRouter();
   const titleId = useId();
@@ -281,14 +296,14 @@ function AppleStyleSearchOverlay({
               placeholder="Search"
               autoComplete="off"
               enterKeyHint="search"
-              className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[1.75rem] font-semibold leading-tight tracking-tight text-[#1d1d1f] placeholder:text-[#86868b] placeholder:opacity-100 [-webkit-appearance:none] appearance-none focus:outline-none focus:ring-0 sm:text-[2.25rem] md:text-[2.75rem] [font-family:var(--font-geist-sans),system-ui,sans-serif]"
+              className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[1.75rem] font-semibold leading-tight tracking-tight text-[#1d1d1f] placeholder:text-[#86868b] placeholder:opacity-100 [-webkit-appearance:none] appearance-none focus:outline-none focus:ring-0 sm:text-[2.25rem] md:text-[2.75rem]"
             />
           </form>
 
           <div className="mt-14 overflow-hidden sm:mt-20">
             <p
               data-search-quick-title
-              className="m-0 text-[0.8125rem] font-semibold text-[#86868b] [font-family:var(--font-geist-sans),system-ui,sans-serif] [transform-origin:50%_100%] [will-change:transform]"
+              className="m-0 text-[0.8125rem] font-semibold text-[#86868b] [transform-origin:50%_100%] [will-change:transform]"
             >
               Quick Links
             </p>
@@ -302,7 +317,7 @@ function AppleStyleSearchOverlay({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={onClose}
-                      className="group flex items-baseline gap-2 py-1.5 text-[1.0625rem] font-semibold text-[#1d1d1f] no-underline transition-opacity hover:opacity-70 sm:text-[1.125rem] [font-family:var(--font-geist-sans),system-ui,sans-serif] [transform-origin:50%_100%] [will-change:transform]"
+                      className="group flex items-baseline gap-2 py-1.5 text-[1.0625rem] font-semibold text-[#1d1d1f] no-underline transition-opacity hover:opacity-70 sm:text-[1.125rem] [transform-origin:50%_100%] [will-change:transform]"
                     >
                       <span className="font-normal text-[#1d1d1f] opacity-80" aria-hidden>
                         →
@@ -314,7 +329,7 @@ function AppleStyleSearchOverlay({
                       href={href}
                       data-search-link
                       onClick={onClose}
-                      className="group flex items-baseline gap-2 py-1.5 text-[1.0625rem] font-semibold text-[#1d1d1f] no-underline transition-opacity hover:opacity-70 sm:text-[1.125rem] [font-family:var(--font-geist-sans),system-ui,sans-serif] [transform-origin:50%_100%] [will-change:transform]"
+                      className="group flex items-baseline gap-2 py-1.5 text-[1.0625rem] font-semibold text-[#1d1d1f] no-underline transition-opacity hover:opacity-70 sm:text-[1.125rem] [transform-origin:50%_100%] [will-change:transform]"
                     >
                       <span className="font-normal text-[#1d1d1f] opacity-80" aria-hidden>
                         →
@@ -334,36 +349,88 @@ function AppleStyleSearchOverlay({
 
 export default function SiteHeader() {
   const { itemCount, isReady } = useCart();
+  const { user } = useSupabaseUser();
   const [searchOpen, setSearchOpen] = useState(false);
+  const isSignedIn = Boolean(user);
 
-  const staggeredItems = [
-    { label: "Home", ariaLabel: "Go to home", link: "/" },
-    { label: "Catalog", ariaLabel: "Browse the catalog", link: "/shop" },
-    {
-      label: "IndiaMART",
-      ariaLabel: "Mathi Enterprises on IndiaMART",
-      link: "https://www.indiamart.com/mathi-enterprises-tamilnadu/",
-    },
-    {
-      label: "Bag",
-      ariaLabel:
-        isReady && itemCount > 0
-          ? `Shopping bag, ${itemCount > 99 ? "99+" : itemCount} items`
-          : "Shopping bag",
-      link: "/cart",
-    },
-  ];
+  const searchQuickLinks = useMemo((): SearchQuickLink[] => {
+    const authLink: SearchQuickLink = isSignedIn
+      ? { label: "Account", href: "/account" }
+      : { label: "Sign in", href: "/login" };
+    return [
+      { label: "Catalog", href: "/shop" },
+      { label: "Bricks", href: "/bricks" },
+      { label: "Aggregates", href: "/aggregates" },
+      { label: "Sand", href: "/sand" },
+      { label: "Cement", href: "/cement" },
+      { label: "Contact", href: "/contact" },
+      { label: "Shopping bag", href: "/cart" },
+      authLink,
+      { label: "IndiaMART storefront", href: "https://www.indiamart.com/mathi-enterprises-tamilnadu/", external: true },
+      { label: "Home", href: "/" },
+    ];
+  }, [isSignedIn]);
+
+  const staggeredItems = useMemo(
+    () => [
+      { label: "Home", ariaLabel: "Go to home", link: "/" },
+      {
+        label: "BRICKS",
+        ariaLabel: "View brick products",
+        link: "/bricks",
+      },
+      {
+        label: "AGGREGATES",
+        ariaLabel: "View aggregate products",
+        link: "/aggregates",
+      },
+      {
+        label: "SAND",
+        ariaLabel: "View sand products",
+        link: "/sand",
+      },
+      {
+        label: "CEMENT",
+        ariaLabel: "View bagged cement products",
+        link: "/cement",
+      },
+      {
+        label: "IndiaMART",
+        ariaLabel: "Mathi Enterprises on IndiaMART",
+        link: "https://www.indiamart.com/mathi-enterprises-tamilnadu/",
+      },
+      { label: "Catalog", ariaLabel: "Browse the catalog", link: "/shop" },
+      { label: "Contact", ariaLabel: "Contact Mathi Enterprises", link: "/contact" },
+      isSignedIn
+        ? { label: "Account", ariaLabel: "Your account and orders", link: "/account" }
+        : { label: "Sign in", ariaLabel: "Sign in to your account", link: "/login" },
+      {
+        label: "Bag",
+        ariaLabel:
+          isReady && itemCount > 0
+            ? `Shopping bag, ${itemCount > 99 ? "99+" : itemCount} items`
+            : "Shopping bag",
+        link: "/cart",
+      },
+    ],
+    [isSignedIn, isReady, itemCount]
+  );
 
   const mobileEndSlot = (
     <>
       <SearchOpenButton onOpen={() => setSearchOpen(true)} />
+      <UserNavLink isSignedIn={isSignedIn} />
       <CartBadgeLink />
     </>
   );
 
   return (
     <>
-      <AppleStyleSearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <AppleStyleSearchOverlay
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        quickLinks={searchQuickLinks}
+      />
       {/* Mobile / tablet: Apple-style bar + StaggeredMenu (GSAP panel) */}
       <div className="lg:hidden">
         <StaggeredMenu
@@ -376,7 +443,6 @@ export default function SiteHeader() {
           openMenuButtonColor="#1d1d1f"
           changeMenuColorOnOpen={false}
           displaySocials={false}
-          displayItemNumbering
           colors={["#e8e8ed", "#d2d2d7", "#c4c4cc"]}
           accentColor="#0071e3"
           items={staggeredItems}
@@ -438,6 +504,7 @@ export default function SiteHeader() {
 
           <div className="relative z-[110] flex items-center gap-1 md:gap-2">
             <SearchOpenButton onOpen={() => setSearchOpen(true)} />
+            <UserNavLink isSignedIn={isSignedIn} />
             <CartBadgeLink />
           </div>
         </div>

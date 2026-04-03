@@ -12,6 +12,9 @@ import {
 } from "react";
 import type { Product } from "@/data/products";
 
+/** Minimal product fields needed for cart state (keeps the root layout → client boundary small). */
+export type CartCatalogEntry = Pick<Product, "id" | "price" | "priceOnRequest">;
+
 const STORAGE_KEY = "mathi-cart-v2";
 
 export type CartLine = {
@@ -67,7 +70,7 @@ function persist(lines: CartLine[]) {
   }
 }
 
-export function CartProvider({ children, products }: { children: ReactNode; products: Product[] }) {
+export function CartProvider({ children, catalog }: { children: ReactNode; catalog: CartCatalogEntry[] }) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const hydrated = useRef(false);
   const [isReady, setIsReady] = useState(false);
@@ -75,13 +78,13 @@ export function CartProvider({ children, products }: { children: ReactNode; prod
   useEffect(() => {
     if (hydrated.current) return;
     hydrated.current = true;
-    const allowed = new Set(products.filter((p) => !p.priceOnRequest).map((p) => p.id));
+    const allowed = new Set(catalog.filter((p) => !p.priceOnRequest).map((p) => p.id));
     const fromStore = loadFromStorage().filter((l) => allowed.has(l.productId));
     /* eslint-disable react-hooks/set-state-in-effect -- one-time client hydration from localStorage (unavailable on server) */
     setLines(fromStore);
     setIsReady(true);
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [products]);
+  }, [catalog]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -90,11 +93,11 @@ export function CartProvider({ children, products }: { children: ReactNode; prod
 
   const priceById = useMemo(() => {
     const m = new Map<string, number>();
-    products.forEach((p) => {
+    catalog.forEach((p) => {
       if (!p.priceOnRequest) m.set(p.id, p.price);
     });
     return m;
-  }, [products]);
+  }, [catalog]);
 
   const itemCount = useMemo(() => lines.reduce((n, l) => n + l.quantity, 0), [lines]);
 

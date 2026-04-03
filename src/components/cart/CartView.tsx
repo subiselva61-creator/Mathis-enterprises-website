@@ -1,18 +1,64 @@
 "use client";
 
+import { gsap } from "gsap";
 import Image from "next/image";
 import Link from "next/link";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import type { Product } from "@/data/products";
 import { formatPrice, formatProductPrice } from "@/lib/format";
 import { useCart } from "@/components/cart/cart-context";
-import { RippleButton, RippleButtonRipples } from "@/components/ui";
+import "@/components/ui/RippleButton.css";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { registerScrollTrigger, ScrollTrigger } from "@/lib/gsap/registerScrollTrigger";
 import styles from "./CartView.module.css";
 
 type Props = { products: Product[] };
 
 export default function CartView({ products }: Props) {
+  const reducedMotion = usePrefersReducedMotion();
+  const listRef = useRef<HTMLUListElement>(null);
   const { lines, setQuantity, removeItem, subtotalCents, isReady } = useCart();
   const byId = new Map(products.map((p) => [p.id, p]));
+
+  const linesKey = useMemo(
+    () =>
+      [...lines]
+        .sort((a, b) => a.productId.localeCompare(b.productId))
+        .map((l) => l.productId)
+        .join(","),
+    [lines],
+  );
+
+  useLayoutEffect(() => {
+    if (reducedMotion) return;
+    const ul = listRef.current;
+    if (!ul || lines.length === 0) return;
+    registerScrollTrigger();
+    const ctx = gsap.context(() => {
+      ul.querySelectorAll<HTMLElement>("[data-scroll-cart-row]").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { autoAlpha: 0, y: 24, x: -10 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            x: 0,
+            duration: 0.52,
+            delay: i * 0.05,
+            ease: "power2.out",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: el,
+              start: "top 92%",
+              once: true,
+            },
+          },
+        );
+      });
+    }, ul);
+    ScrollTrigger.refresh();
+    return () => ctx.revert();
+  }, [linesKey, lines.length, reducedMotion]);
 
   if (!isReady) {
     return <p className={styles.loading}>Loading cart…</p>;
@@ -35,13 +81,13 @@ export default function CartView({ products }: Props) {
 
   return (
     <div className={styles.layout}>
-      <ul className={styles.list}>
+      <ul ref={listRef} className={styles.list}>
         {lines.map((line) => {
           const product = byId.get(line.productId);
           if (!product) return null;
           const img = product.images[0];
           return (
-            <li key={line.productId} className={styles.row}>
+            <li key={line.productId} className={styles.row} data-scroll-cart-row>
               <Link href={`/shop/${product.slug}`} className={styles.thumbLink}>
                 <div className={styles.thumb}>
                   <Image
@@ -97,7 +143,7 @@ export default function CartView({ products }: Props) {
         })}
       </ul>
 
-      <aside className={styles.summary} aria-labelledby="summary-heading">
+      <aside className={styles.summary} aria-labelledby="summary-heading" data-scroll-cart-summary>
         <h2 id="summary-heading" className={styles.summaryTitle}>
           Order summary
         </h2>
@@ -106,13 +152,15 @@ export default function CartView({ products }: Props) {
           <span>{formatPrice(subtotal, currency)}</span>
         </div>
         <p className={styles.checkoutNote}>
-          Checkout is not connected — the bag is for planning quantities only. For orders, use IndiaMART or call your
-          Mathi Enterprises contact.
+          Payment is cash on delivery. Confirm contact and delivery details on the next screens. Indicative subtotal only —
+          final amount confirmed before dispatch.
         </p>
-        <RippleButton type="button" variant="primary" className={styles.checkoutBtn} disabled>
+        <Link
+          href="/checkout"
+          className={`ripple-button ripple-button--variant-primary ${styles.checkoutBtn}`}
+        >
           Proceed to checkout
-          <RippleButtonRipples />
-        </RippleButton>
+        </Link>
         <Link href="/shop" className={styles.continue}>
           Continue shopping
         </Link>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ShopExplorer from "@/components/shop/ShopExplorer";
-import { products } from "@/data/products";
+import { getMergedProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Shop",
@@ -16,6 +16,7 @@ export default async function ShopPage({ searchParams }: Props) {
   const sp = searchParams ? await searchParams : {};
   const cat = sp.cat;
   const q = sp.q;
+  const products = await getMergedProducts();
   return (
     <div className="page-container">
       <h1 className="pageTitle">Shop</h1>

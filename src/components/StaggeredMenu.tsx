@@ -15,7 +15,10 @@ function smNumOpacityVars(opacity: number): gsap.TweenVars {
 export interface StaggeredMenuItem {
   label: string;
   ariaLabel: string;
+  /** Used for items without `children`, or as a fallback URL. */
   link: string;
+  /** When set, tapping this row opens a full in-panel drill-down (Apple-style) instead of navigating. */
+  children?: StaggeredMenuItem[];
 }
 export interface StaggeredMenuSocialItem {
   label: string;
@@ -54,7 +57,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   items = [],
   socialItems = [],
   displaySocials = true,
-  displayItemNumbering = true,
+  displayItemNumbering = false,
   className,
   endSlot,
   scopeClassName,
@@ -72,6 +75,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 }: StaggeredMenuProps) => {
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
+  /** Top-level index whose `children` are shown in the drill-down layer. */
+  const [drilledIndex, setDrilledIndex] = useState<number | null>(null);
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const preLayersRef = useRef<HTMLDivElement | null>(null);
@@ -92,6 +97,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const colorTweenRef = useRef<gsap.core.Tween | null>(null);
 
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
+  const drillBackRef = useRef<HTMLButtonElement | null>(null);
   const busyRef = useRef(false);
 
   const itemEntranceTweenRef = useRef<gsap.core.Tween | null>(null);
@@ -373,6 +379,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     if (openRef.current) {
       openRef.current = false;
       setOpen(false);
+      setDrilledIndex(null);
       onMenuClose?.();
       playClose();
       animateIcon(false);
@@ -400,6 +407,19 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [closeOnClickAway, open, closeMenu]);
+
+  React.useEffect(() => {
+    if (!open) setDrilledIndex(null);
+  }, [open]);
+
+  const drilledItem = drilledIndex !== null ? items[drilledIndex] : null;
+  const drillChildren = drilledItem?.children;
+
+  React.useEffect(() => {
+    if (drilledIndex === null) return;
+    const id = requestAnimationFrame(() => drillBackRef.current?.focus());
+    return () => cancelAnimationFrame(id);
+  }, [drilledIndex]);
 
   return (
     <div
@@ -456,7 +476,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 height={24}
               />
               {brandName ? (
-                <span className="truncate p-0 -my-[26px] text-[0.8125rem] font-semibold leading-tight tracking-tight text-[#1d1d1f] [font-family:var(--font-poppins)] sm:text-sm">
+                <span className="truncate p-0 -my-[26px] text-[0.8125rem] font-semibold leading-tight tracking-tight text-[#1d1d1f] sm:text-sm">
                   {brandName}
                 </span>
               ) : null}
@@ -511,84 +531,200 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <aside
           id="staggered-menu-panel"
           ref={panelRef}
-          className="staggered-menu-panel absolute top-0 right-0 h-full bg-white flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-[12px] pointer-events-auto"
+          className="staggered-menu-panel absolute top-0 right-0 z-10 flex h-full flex-col bg-white backdrop-blur-[12px] pointer-events-auto overflow-y-auto"
           style={{ WebkitBackdropFilter: 'blur(12px)' }}
           aria-hidden={!open}
         >
-          <div className="sm-panel-inner flex-1 flex flex-col gap-5">
-            <ul
-              className="sm-panel-list list-none m-0 p-0 flex flex-col gap-2"
-              role="list"
-              data-numbering={displayItemNumbering || undefined}
-            >
-              {items && items.length ? (
-                items.map((it, idx) => {
-                  const itemClass =
-                    "sm-panel-item relative text-black font-semibold text-[4rem] cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline pr-[1.4em]";
-                  const label = (
-                    <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
-                      {it.label}
-                    </span>
-                  );
-                  return (
-                    <li className="sm-panel-itemWrap relative overflow-hidden leading-none" key={it.label + idx}>
-                      {isInternalPath(it.link) ? (
-                        <Link
-                          href={it.link}
-                          className={itemClass}
-                          aria-label={it.ariaLabel}
-                          data-index={idx + 1}
-                          onClick={() => closeMenu()}
-                        >
-                          {label}
-                        </Link>
-                      ) : (
-                        <a
-                          className={itemClass}
-                          href={it.link}
-                          aria-label={it.ariaLabel}
-                          data-index={idx + 1}
-                          onClick={() => closeMenu()}
-                        >
-                          {label}
-                        </a>
-                      )}
-                    </li>
-                  );
-                })
-              ) : (
-                <li className="sm-panel-itemWrap relative overflow-hidden leading-none" aria-hidden="true">
-                  <span className="sm-panel-item relative text-black font-semibold text-[4rem] cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline pr-[1.4em]">
-                    <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
-                      No items
-                    </span>
-                  </span>
-                </li>
-              )}
-            </ul>
+          <div className="sm-panel-inner flex min-h-0 flex-1 flex-col">
+            {/* Two full-width layers (avoids 200% flex column rounding / clipping with overflow-x on body) */}
+            <div className="relative min-h-0 flex-1 overflow-hidden">
+              <div
+                className={`sm-panel-layer-root absolute inset-0 flex flex-col overflow-y-auto transition-transform duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+                  drilledIndex === null ? "translate-x-0" : "-translate-x-full"
+                }`}
+              >
+                  <ul
+                    className="sm-panel-list list-none m-0 flex flex-col gap-2 p-0"
+                    role="list"
+                    data-numbering={displayItemNumbering || undefined}
+                  >
+                    {items && items.length ? (
+                      items.map((it, idx) => {
+                        const itemClass =
+                          "sm-panel-item relative inline-block cursor-pointer text-black font-semibold uppercase leading-none tracking-[-2px] no-underline pr-[1.4em] transition-[background,color] duration-150 ease-linear max-w-full text-[clamp(2.25rem,12vw,3.75rem)] min-[420px]:text-[clamp(2.75rem,10vw,4rem)]";
+                        const label = (
+                          <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
+                            {it.label}
+                          </span>
+                        );
+                        const hasChildren = Boolean(it.children?.length);
 
-            {displaySocials && socialItems && socialItems.length > 0 && (
-              <div className="sm-socials mt-auto pt-8 flex flex-col gap-3" aria-label="Social links">
-                <h3 className="sm-socials-title m-0 text-base font-medium [color:var(--sm-accent,#ff0000)]">Socials</h3>
-                <ul
-                  className="sm-socials-list list-none m-0 p-0 flex flex-row items-center gap-4 flex-wrap"
-                  role="list"
-                >
-                  {socialItems.map((s, i) => (
-                    <li key={s.label + i} className="sm-socials-item">
-                      <a
-                        href={s.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="sm-socials-link text-[1.2rem] font-medium text-[#111] no-underline relative inline-block py-[2px] transition-[color,opacity] duration-300 ease-linear"
+                        if (hasChildren) {
+                          return (
+                            <li
+                              className="sm-panel-itemWrap relative overflow-visible leading-none"
+                              key={it.label + idx}
+                            >
+                              <button
+                                type="button"
+                                className={`${itemClass} w-full text-left bg-transparent border-0 p-0 font-semibold`}
+                                aria-label={it.ariaLabel}
+                                aria-haspopup="true"
+                                data-index={idx + 1}
+                                onClick={() => setDrilledIndex(idx)}
+                              >
+                                {label}
+                                <span
+                                  className="pointer-events-none absolute right-[0.12em] top-1/2 inline-block h-0 w-0 border-y-[0.35em] border-l-[0.45em] border-y-transparent border-l-[#1d1d1f] opacity-45"
+                                  style={{ transform: "translateY(-50%)" }}
+                                  aria-hidden
+                                />
+                              </button>
+                            </li>
+                          );
+                        }
+
+                        return (
+                          <li className="sm-panel-itemWrap relative overflow-visible leading-none" key={it.label + idx}>
+                            {isInternalPath(it.link) ? (
+                              <Link
+                                href={it.link}
+                                className={itemClass}
+                                aria-label={it.ariaLabel}
+                                data-index={idx + 1}
+                                onClick={() => closeMenu()}
+                              >
+                                {label}
+                              </Link>
+                            ) : (
+                              <a
+                                className={itemClass}
+                                href={it.link}
+                                aria-label={it.ariaLabel}
+                                data-index={idx + 1}
+                                onClick={() => closeMenu()}
+                              >
+                                {label}
+                              </a>
+                            )}
+                          </li>
+                        );
+                      })
+                    ) : (
+                      <li className="sm-panel-itemWrap relative overflow-visible leading-none" aria-hidden="true">
+                        <span className="sm-panel-item relative inline-block cursor-default pr-[1.4em] text-[clamp(2.25rem,12vw,3.75rem)] font-semibold uppercase leading-none tracking-[-2px] text-black min-[420px]:text-[clamp(2.75rem,10vw,4rem)]">
+                          <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
+                            No items
+                          </span>
+                        </span>
+                      </li>
+                    )}
+                  </ul>
+
+                  {displaySocials && socialItems && socialItems.length > 0 && (
+                    <div className="sm-socials mt-auto flex flex-col gap-3 pt-8" aria-label="Social links">
+                      <h3 className="sm-socials-title m-0 text-base font-medium [color:var(--sm-accent,#ff0000)]">
+                        Socials
+                      </h3>
+                      <ul
+                        className="sm-socials-list m-0 flex list-none flex-row flex-wrap items-center gap-4 p-0"
+                        role="list"
                       >
-                        {s.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                        {socialItems.map((s, i) => (
+                          <li key={s.label + i} className="sm-socials-item">
+                            <a
+                              href={s.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="sm-socials-link relative inline-block py-[2px] text-[1.2rem] font-medium text-[#111] no-underline transition-[color,opacity] duration-300 ease-linear"
+                            >
+                              {s.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
               </div>
-            )}
+
+              <div
+                className={`sm-panel-layer-drill absolute inset-0 flex flex-col overflow-y-auto pl-0 transition-transform duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+                  drilledIndex === null ? "translate-x-full pointer-events-none" : "translate-x-0"
+                }`}
+                aria-hidden={drilledIndex === null}
+              >
+                  {drilledItem && drillChildren?.length ? (
+                    <div className="sm-drill-view flex flex-col pb-4">
+                      <button
+                        ref={drillBackRef}
+                        type="button"
+                        className="sm-drill-back mb-5 flex w-max items-center gap-0.5 rounded-md border-0 bg-transparent py-2 pl-0 pr-3 text-[1.0625rem] font-normal text-[#1d1d1f] transition-opacity hover:opacity-65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sm-accent,#0071e3)]"
+                        onClick={() => setDrilledIndex(null)}
+                        aria-label="Back to main menu"
+                      >
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.25"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="shrink-0 opacity-90"
+                          aria-hidden
+                        >
+                          <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                      </button>
+                      <p className="m-0 mb-4 text-xs font-semibold uppercase tracking-wide text-[#6e6e73]">
+                        {drilledItem.label}
+                      </p>
+                      <ul className="m-0 flex list-none flex-col gap-1 p-0" role="list">
+                        {isInternalPath(drilledItem.link) ? (
+                          <li key="__explore-all">
+                            <Link
+                              href={drilledItem.link}
+                              className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-colors hover:text-[var(--sm-accent,#0071e3)] sm:text-[1.875rem]"
+                              aria-label={`Explore all ${drilledItem.label}`}
+                              onClick={() => closeMenu()}
+                            >
+                              Explore all {drilledItem.label.toLowerCase()}
+                            </Link>
+                          </li>
+                        ) : null}
+                        {drillChildren.map((sub, sidx) => (
+                          <li key={sub.label + sidx}>
+                            {isInternalPath(sub.link) ? (
+                              <Link
+                                href={sub.link}
+                                className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-colors hover:text-[var(--sm-accent,#0071e3)] sm:text-[1.875rem]"
+                                aria-label={sub.ariaLabel}
+                                onClick={() => closeMenu()}
+                              >
+                                {sub.label}
+                              </Link>
+                            ) : (
+                              <a
+                                href={sub.link}
+                                className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-colors hover:text-[var(--sm-accent,#0071e3)] sm:text-[1.875rem]"
+                                aria-label={sub.ariaLabel}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => closeMenu()}
+                              >
+                                {sub.label}
+                              </a>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div className="flex-1" aria-hidden />
+                  )}
+              </div>
+            </div>
           </div>
         </aside>
       </div>
@@ -606,10 +742,10 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 .sm-scope .sm-toggle-textInner { display: flex; flex-direction: column; line-height: 1; }
 .sm-scope .sm-toggle-line { display: block; height: 1em; line-height: 1; }
 .sm-scope .sm-icon { position: relative; width: 14px; height: 14px; flex: 0 0 14px; display: inline-flex; align-items: center; justify-content: center; will-change: transform; }
-.sm-scope .sm-panel-itemWrap { position: relative; overflow: hidden; line-height: 1; }
+.sm-scope .sm-panel-itemWrap { position: relative; overflow: visible; line-height: 1; }
 .sm-scope .sm-icon-line { position: absolute; left: 50%; top: 50%; width: 100%; height: 2px; background: currentColor; border-radius: 2px; transform: translate(-50%, -50%); will-change: transform; }
 .sm-scope .sm-line { display: none !important; }
-.sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(260px, 38vw, 420px); height: 100%; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em 2em 2em 2em; overflow-y: auto; z-index: 10; scrollbar-width: none; -ms-overflow-style: none; }
+.sm-scope .staggered-menu-panel { position: absolute; top: 0; right: 0; width: clamp(260px, 38vw, 420px); height: 100%; background: white; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; padding: 6em max(1.25rem, env(safe-area-inset-right, 0px)) 2em max(1.25rem, env(safe-area-inset-left, 0px)); overflow-y: auto; z-index: 10; scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box; }
 .sm-scope .staggered-menu-panel::-webkit-scrollbar { display: none; }
 .sm-scope [data-position='left'] .staggered-menu-panel { right: auto; left: 0; }
 .sm-scope .sm-prelayers { position: absolute; top: 0; right: 0; bottom: 0; width: clamp(260px, 38vw, 420px); pointer-events: none; z-index: 5; }
@@ -629,13 +765,13 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 .sm-scope .sm-socials-link:hover { color: var(--sm-accent, #ff0000); }
 .sm-scope .sm-panel-title { margin: 0; font-size: 1rem; font-weight: 600; color: #fff; text-transform: uppercase; }
 .sm-scope .sm-panel-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
-.sm-scope .sm-panel-item { position: relative; color: #000; font-weight: 600; font-size: 4rem; cursor: pointer; line-height: 1; letter-spacing: -2px; text-transform: uppercase; transition: background 0.25s, color 0.25s; display: inline-block; text-decoration: none; padding-right: 1.4em; }
+.sm-scope .sm-panel-item { position: relative; color: #000; font-weight: 600; cursor: pointer; line-height: 1; letter-spacing: -2px; text-transform: uppercase; transition: background 0.25s, color 0.25s; display: inline-block; text-decoration: none; padding-right: 1.4em; }
 .sm-scope .sm-panel-itemLabel { display: inline-block; will-change: transform; transform-origin: 50% 100%; }
 .sm-scope .sm-panel-item:hover { color: var(--sm-accent, #ff0000); }
 .sm-scope .sm-panel-list[data-numbering] { counter-reset: smItem; }
 .sm-scope .sm-panel-list[data-numbering] .sm-panel-item::after { counter-increment: smItem; content: counter(smItem, decimal-leading-zero); position: absolute; top: 0.1em; right: 3.2em; font-size: 18px; font-weight: 400; color: var(--sm-accent, #ff0000); letter-spacing: 0; pointer-events: none; user-select: none; opacity: var(--sm-num-opacity, 0); }
-@media (max-width: 1024px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } }
-@media (max-width: 640px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; } }
+@media (max-width: 1024px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; max-width: 100%; padding-left: max(1.25rem, env(safe-area-inset-left, 0px)); padding-right: max(1.25rem, env(safe-area-inset-right, 0px)); } }
+@media (max-width: 640px) { .sm-scope .staggered-menu-panel { width: 100%; left: 0; right: 0; max-width: 100%; padding-left: max(1.25rem, env(safe-area-inset-left, 0px)); padding-right: max(1.25rem, env(safe-area-inset-right, 0px)); } }
       `}</style>
     </div>
   );

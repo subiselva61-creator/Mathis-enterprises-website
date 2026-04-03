@@ -4,7 +4,6 @@ import { catalogImages as I } from "./images";
 
 const CE = `${INDIAMART_BASE}/construction-cement.html`;
 const DC = `${INDIAMART_BASE}/dalmia-cement.html`;
-const RC = `${INDIAMART_BASE}/ramco-cement.html`;
 const cat = "Cement";
 const t = ["Chennai", "cement", "Mathi Enterprises"];
 
@@ -132,41 +131,5 @@ export const cementProducts: Product[] = [
       { label: "Brand", value: "Dalmia" },
     ],
     indiaMartUrl: `${DC}#2854059750130`,
-  },
-  {
-    id: "cem-dalmia-ppc",
-    slug: "dalmia-ppc-cement",
-    name: "Dalmia PPC Cement",
-    description:
-      "Dalmia pozzolana Portland cement — suitable for general construction; verify latest rate on enquiry.",
-    price: 335,
-    currency: "INR",
-    priceBasis: "Bag",
-    images: [I.cement],
-    category: cat,
-    tags: [...t, "Dalmia", "PPC"],
-    specs: [
-      { label: "Packaging", value: "50 kg bag (typical)" },
-      { label: "Brand", value: "Dalmia" },
-    ],
-    indiaMartUrl: `${DC}#2854059546130`,
-  },
-  {
-    id: "cem-ramco-bop",
-    slug: "ramco-bop-cement",
-    name: "Ramco BOP Cement",
-    description:
-      "Ramco BOP cement offering in 50 kg sacks — check stock and pricing before bulk dispatch.",
-    price: 330,
-    currency: "INR",
-    priceBasis: "Bag",
-    images: [I.cement],
-    category: cat,
-    tags: [...t, "Ramco", "BOP"],
-    specs: [
-      { label: "Brand", value: "Ramco" },
-      { label: "Type", value: "BOP cement" },
-    ],
-    indiaMartUrl: `${RC}#2854059718162`,
   },
 ];

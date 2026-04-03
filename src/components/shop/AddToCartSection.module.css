@@ -26,6 +26,35 @@
   background: #fff;
 }
 
+.counterSlot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.5rem;
+  height: 2.5rem;
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+  background: #fff;
+}
+
+.counterSlot:focus-within {
+  outline: 2px solid #171717;
+  outline-offset: -2px;
+}
+
+.srOnlyInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .stepBtn {
   width: 2.5rem;
   height: 2.5rem;
@@ -46,33 +75,25 @@
   outline-offset: -2px;
 }
 
-.qtyInput {
-  width: 3rem;
-  text-align: center;
-  border: none;
-  border-left: 1px solid #e5e5e5;
-  border-right: 1px solid #e5e5e5;
-  background: #fff;
-  color: #171717;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 0.5rem 0;
-  -moz-appearance: textfield;
-}
-
-.qtyInput::-webkit-outer-spin-button,
-.qtyInput::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.qtyInput:focus-visible {
-  outline: 2px solid #171717;
-  outline-offset: -2px;
-}
-
 .addBtn {
   min-width: 200px;
+}
+
+/* overflow:visible so descendants using background-clip:text (ShinyText) paint correctly; .ripple-button defaults to hidden. */
+.freeSampleBtn {
+  min-width: 200px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  overflow: visible;
+  position: relative;
+}
+
+.freeSampleShiny {
+  font-weight: 600;
+  -webkit-font-smoothing: antialiased;
 }
 
 .toast,
@@ -104,11 +125,11 @@
   align-items: center;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #0066cc;
+  color: #0027eb;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .quoteLink:hover {
-  color: #0077ed;
+  color: #1e46f4;
 }

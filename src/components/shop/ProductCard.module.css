@@ -22,7 +22,7 @@
 }
 
 .link:focus-visible {
-  outline: 2px solid #0066cc;
+  outline: 2px solid #0027eb;
   outline-offset: 3px;
   border-radius: 24px;
 }
@@ -36,7 +36,15 @@
 
 .imagePad {
   position: absolute;
-  inset: 10% 8% 12%;
+  /* Equal inset so every product sits centered in the same frame */
+  inset: 6%;
+}
+
+.imageClipM20 {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  overflow: hidden;
 }
 
 .image {

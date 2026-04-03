@@ -35,19 +35,19 @@
   border-radius: 9999px;
   font-weight: 400;
   font-size: 1rem;
-  color: #0066cc;
+  color: #0027eb;
   background: transparent;
-  border: 1px solid #0066cc;
+  border: 1px solid #0027eb;
   text-decoration: none;
   transition: background-color 0.2s ease;
 }
 
 .shopLink:hover {
-  background: rgba(0, 102, 204, 0.08);
+  background: rgba(0, 39, 235, 0.08);
 }
 
 .shopLink:focus-visible {
-  outline: 2px solid #0066cc;
+  outline: 2px solid #0027eb;
   outline-offset: 2px;
 }
 
@@ -255,6 +255,12 @@
 
 .checkoutBtn {
   width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .continue {
@@ -267,19 +273,19 @@
   border-radius: 9999px;
   font-size: 0.95rem;
   font-weight: 400;
-  color: #0066cc;
+  color: #0027eb;
   background: transparent;
-  border: 1px solid #0066cc;
+  border: 1px solid #0027eb;
   text-decoration: none;
   text-align: center;
   transition: background-color 0.2s ease;
 }
 
 .continue:hover {
-  background: rgba(0, 102, 204, 0.08);
+  background: rgba(0, 39, 235, 0.08);
 }
 
 .continue:focus-visible {
-  outline: 2px solid #0066cc;
+  outline: 2px solid #0027eb;
   outline-offset: 2px;
 }

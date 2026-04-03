@@ -6,23 +6,26 @@
 
 :root {
   --muted: #9b96c4;
+  /* Match fixed SiteHeader: h-11 (44px), md:h-12 (48px) */
+  --site-header-height: 44px;
 }
 
+@media (min-width: 768px) {
+  :root {
+    --site-header-height: 48px;
+  }
+}
+
+/* scroll-behavior: smooth breaks GSAP ScrollTrigger scrub / parallax */
 html {
   height: 100%;
+  scroll-behavior: auto;
 }
 
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  display: none;
 }
 
 body {
@@ -30,8 +33,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, var(--font-geist-sans), sans-serif;
+  font-family: var(--font-sans, "Helvetica Neue", Helvetica, Arial, sans-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #fff;
@@ -45,6 +47,28 @@ body {
   flex: 1;
   min-height: 100%;
   min-height: 100dvh;
+}
+
+/* Global scroll / parallax backdrop (see SiteScrollExperience) */
+.site-parallax-blob--a {
+  width: min(58vw, 440px);
+  height: min(58vw, 440px);
+  top: -10%;
+  right: -8%;
+}
+
+.site-parallax-blob--b {
+  width: min(48vw, 360px);
+  height: min(48vw, 360px);
+  top: 38%;
+  left: -12%;
+}
+
+.site-parallax-blob--c {
+  width: min(42vw, 320px);
+  height: min(42vw, 320px);
+  bottom: -6%;
+  right: 18%;
 }
 
 * {
@@ -94,6 +118,32 @@ a {
   }
 }
 
+.home-scroll-section {
+  scroll-margin-top: calc(var(--site-header-height) + 8px);
+}
+
+/* Product detail (/shop/[slug]): entrance when navigating from Buy now, catalog, etc. */
+@keyframes shop-product-route-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.shop-product-route-enter {
+  animation: shop-product-route-enter 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-product-route-enter {
+    animation: none;
+  }
+}
+
 /* Constrain inner pages (shop, cart, product); home uses full-bleed blocks inside. */
 .page-container {
   max-width: 1120px;
@@ -126,7 +176,6 @@ html {
 @layer base {
   .theme {
     --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
   }
   :root {
     --background: oklch(1 0 0);
@@ -135,8 +184,8 @@ html {
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
-    /* Apple-style CTA blue (matches system link / product CTAs) */
-    --primary: #0066cc;
+    /* Primary CTA blue */
+    --primary: #0027eb;
     --primary-foreground: #ffffff;
     --secondary: oklch(0.97 0 0);
     --secondary-foreground: oklch(0.205 0 0);
@@ -208,6 +257,21 @@ html {
     color: var(--foreground);
   }
   html {
-    font-family: var(--font-geist-sans), var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-sans, "Helvetica Neue", Helvetica, Arial, sans-serif);
   }
+}
+
+/*
+ * Hide scrollbars site-wide while keeping scroll behavior.
+ * Unlayered so this wins over Tailwind/Shadcn; textarea excluded for long admin copy.
+ */
+*:not(textarea) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*:not(textarea)::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
