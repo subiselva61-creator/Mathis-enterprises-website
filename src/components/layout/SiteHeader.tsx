@@ -2,58 +2,446 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { Search, ShoppingBag, X } from "lucide-react";
+import { gsap } from "gsap";
+import StaggeredMenu from "@/components/StaggeredMenu";
 import { useCart } from "@/components/cart/cart-context";
-import styles from "./SiteHeader.module.css";
+import { cn } from "@/lib/utils";
 
-const nav = [
-  { href: "/", label: "Home" },
-  { href: "/shop", label: "Shop" },
-  { href: "/cart", label: "Cart" },
+const BRAND_NAME = "Mathi Enterprises";
+
+const centerNav: { href: string; label: string; external?: boolean }[] = [
+  { href: "/shop", label: "Catalog" },
+  { href: "https://www.indiamart.com/mathi-enterprises-tamilnadu/", label: "IndiaMART", external: true },
 ];
 
-export default function SiteHeader() {
-  const pathname = usePathname();
+function CartBadgeLink() {
   const { itemCount, isReady } = useCart();
+  return (
+    <Link
+      href="/cart"
+      className="relative flex h-10 w-10 items-center justify-center text-[#1d1d1f] opacity-90 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] md:h-9 md:w-9"
+      aria-label={
+        isReady && itemCount > 0
+          ? `Shopping bag, ${itemCount > 99 ? "99+" : itemCount} items`
+          : "Shopping bag"
+      }
+    >
+      <ShoppingBag className="h-[19px] w-[19px]" strokeWidth={1.5} />
+      {isReady && itemCount > 0 ? (
+        <span className="absolute right-1 top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#1d1d1f] px-0.5 text-[9px] font-bold leading-none text-white">
+          {itemCount > 99 ? "99+" : itemCount}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
+/** Matches StaggeredMenu mobile prelayer palette (middle tone omitted like sm-prelayers). */
+const SEARCH_OVERLAY_PRELAYERS = ["#e8e8ed", "#c4c4cc"] as const;
+
+const quickLinks: { label: string; href: string; external?: boolean }[] = [
+  { label: "Catalog", href: "/shop" },
+  { label: "Shopping bag", href: "/cart" },
+  { label: "IndiaMART storefront", href: "https://www.indiamart.com/mathi-enterprises-tamilnadu/", external: true },
+  { label: "Home", href: "/" },
+];
+
+function SearchOpenButton({
+  className,
+  onOpen,
+}: {
+  className?: string;
+  onOpen: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className={cn(
+        "inline-flex h-10 w-10 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[#1d1d1f] opacity-90 shadow-none ring-0 [-webkit-appearance:none] appearance-none hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] [&::-moz-focus-inner]:border-0 md:h-9 md:w-9",
+        className
+      )}
+      aria-label="Search store"
+      aria-haspopup="dialog"
+    >
+      <Search className="h-[19px] w-[19px]" strokeWidth={1.5} />
+    </button>
+  );
+}
+
+function AppleStyleSearchOverlay({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  const router = useRouter();
+  const titleId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const animTlRef = useRef<gsap.core.Timeline | null>(null);
+  const [draft, setDraft] = useState("");
+  /** Stays true until close animation finishes so the panel can animate out. */
+  const [shouldMount, setShouldMount] = useState(false);
+
+  const submitSearch = useCallback(() => {
+    const q = draft.trim();
+    onClose();
+    setDraft("");
+    if (q) {
+      router.push(`/shop?q=${encodeURIComponent(q)}`);
+    } else {
+      router.push("/shop");
+    }
+  }, [draft, onClose, router]);
+
+  useEffect(() => {
+    if (open) setShouldMount(true);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    setDraft("");
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open, onClose]);
+
+  useLayoutEffect(() => {
+    if (!open && !shouldMount) return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    animTlRef.current?.kill();
+    animTlRef.current = null;
+
+    const prelayers = Array.from(root.querySelectorAll(".search-overlay-prelayer")) as HTMLElement[];
+    const surface = root.querySelector(".search-overlay-surface") as HTMLElement | null;
+    const closeEl = root.querySelector("[data-search-close]") as HTMLElement | null;
+    const formEl = root.querySelector("[data-search-form]") as HTMLElement | null;
+    const quickTitle = root.querySelector("[data-search-quick-title]") as HTMLElement | null;
+    const linkEls = Array.from(root.querySelectorAll("[data-search-link]")) as HTMLElement[];
+
+    if (!surface) return;
+
+    if (open) {
+      gsap.set([...prelayers, surface], { xPercent: 100 });
+      const labelOrigin = { transformOrigin: "50% 100%" as const };
+      if (closeEl) gsap.set(closeEl, { opacity: 0, y: -14 });
+      if (formEl) gsap.set(formEl, { ...labelOrigin, yPercent: 140, rotate: 10, opacity: 1 });
+      if (quickTitle) gsap.set(quickTitle, { ...labelOrigin, yPercent: 140, rotate: 10 });
+      if (linkEls.length)
+        gsap.set(linkEls, { ...labelOrigin, yPercent: 140, rotate: 10, opacity: 1 });
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power4.out" },
+        onComplete: () => {
+          requestAnimationFrame(() => inputRef.current?.focus());
+        },
+      });
+
+      prelayers.forEach((layer, i) => {
+        tl.fromTo(layer, { xPercent: 100 }, { xPercent: 0, duration: 0.5 }, i * 0.07);
+      });
+
+      const lastPreT = prelayers.length ? (prelayers.length - 1) * 0.07 : 0;
+      const surfaceStart = lastPreT + (prelayers.length ? 0.08 : 0);
+      const panelDuration = 0.65;
+
+      tl.fromTo(surface, { xPercent: 100 }, { xPercent: 0, duration: panelDuration }, surfaceStart);
+
+      const contentStart = surfaceStart + panelDuration * 0.15;
+
+      if (closeEl) {
+        tl.to(closeEl, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, contentStart);
+      }
+      if (formEl) {
+        tl.to(
+          formEl,
+          { yPercent: 0, rotate: 0, duration: 1, ease: "power4.out" },
+          contentStart + 0.04
+        );
+      }
+      if (quickTitle) {
+        tl.to(
+          quickTitle,
+          { yPercent: 0, rotate: 0, duration: 1, ease: "power4.out" },
+          contentStart + 0.1
+        );
+      }
+      if (linkEls.length) {
+        tl.to(
+          linkEls,
+          {
+            yPercent: 0,
+            rotate: 0,
+            duration: 1,
+            ease: "power4.out",
+            stagger: { each: 0.1, from: "start" },
+          },
+          contentStart + 0.16
+        );
+      }
+
+      animTlRef.current = tl;
+      tl.play(0);
+    } else {
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.in" },
+        onComplete: () => setShouldMount(false),
+      });
+
+      tl.to(linkEls, { yPercent: 90, rotate: 6, duration: 0.28, stagger: { each: 0.04, from: "end" } }, 0);
+      if (quickTitle) tl.to(quickTitle, { yPercent: 90, rotate: 5, duration: 0.26 }, 0.04);
+      if (formEl) tl.to(formEl, { yPercent: 90, rotate: 6, duration: 0.3 }, 0.06);
+      if (closeEl) tl.to(closeEl, { opacity: 0, y: -10, duration: 0.22, ease: "power2.in" }, 0.04);
+
+      tl.to(surface, { xPercent: 100, duration: 0.34 }, 0.1);
+      prelayers.forEach((layer, i) => {
+        const rev = prelayers.length - 1 - i;
+        tl.to(layer, { xPercent: 100, duration: 0.3 }, 0.14 + rev * 0.05);
+      });
+
+      animTlRef.current = tl;
+      tl.play(0);
+    }
+
+    return () => {
+      animTlRef.current?.kill();
+      animTlRef.current = null;
+    };
+  }, [open, shouldMount]);
+
+  if (!open && !shouldMount) return null;
 
   return (
-    <header className={styles.header}>
-      <div className={styles.inner}>
-        <Link href="/" className={styles.logo}>
-          <Image
-            src="/logo.png"
-            alt=""
-            width={37}
-            height={36}
-            className={styles.logoMark}
-            priority
+    <div
+      ref={rootRef}
+      className="fixed inset-0 z-[200] overflow-hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+    >
+      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+        {SEARCH_OVERLAY_PRELAYERS.map((bg, i) => (
+          <div
+            key={bg}
+            className="search-overlay-prelayer absolute inset-0 will-change-transform"
+            style={{ background: bg, zIndex: i }}
           />
-          <span className={styles.logoText}>Mathis Enterprises</span>
-        </Link>
-        <nav className={styles.nav} aria-label="Main">
-          <ul className={styles.navList}>
-            {nav.map(({ href, label }) => {
-              const active = pathname === href || (href !== "/" && pathname.startsWith(href));
-              return (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className={active ? styles.navLinkActive : styles.navLink}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    {label}
-                    {href === "/cart" && isReady && itemCount > 0 ? (
-                      <span className={styles.badge} aria-label={`${itemCount} items in cart`}>
-                        {itemCount > 99 ? "99+" : itemCount}
-                      </span>
-                    ) : null}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        ))}
       </div>
-    </header>
+
+      <div className="search-overlay-surface absolute inset-0 z-[3] flex flex-col bg-[#f5f5f7] will-change-transform">
+        <button
+          type="button"
+          data-search-close
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent p-0 text-[#86868b] shadow-none ring-0 [-webkit-appearance:none] appearance-none transition-colors hover:text-[#1d1d1f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] [&::-moz-focus-inner]:border-0 md:right-8 md:top-5"
+          aria-label="Close search"
+        >
+          <X className="h-[22px] w-[22px]" strokeWidth={1.25} aria-hidden />
+        </button>
+
+        <div className="flex flex-1 flex-col overflow-y-auto px-5 pb-10 pt-[4.5rem] sm:px-10 md:px-16 md:pt-[5.5rem] lg:mx-auto lg:w-full lg:max-w-[980px] lg:px-10">
+          <h2 id={titleId} className="sr-only">
+            Search
+          </h2>
+
+          <form
+            data-search-form
+            className="flex w-full items-center gap-3 border-0 sm:gap-4 [transform-origin:50%_100%] [will-change:transform]"
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitSearch();
+            }}
+          >
+            <Search
+              className="h-7 w-7 shrink-0 text-[#86868b] sm:h-9 sm:w-9"
+              strokeWidth={1.15}
+              aria-hidden
+            />
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="search"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Search"
+              autoComplete="off"
+              enterKeyHint="search"
+              className="min-w-0 flex-1 border-0 bg-transparent p-0 text-[1.75rem] font-semibold leading-tight tracking-tight text-[#1d1d1f] placeholder:text-[#86868b] placeholder:opacity-100 [-webkit-appearance:none] appearance-none focus:outline-none focus:ring-0 sm:text-[2.25rem] md:text-[2.75rem] [font-family:var(--font-geist-sans),system-ui,sans-serif]"
+            />
+          </form>
+
+          <div className="mt-14 overflow-hidden sm:mt-20">
+            <p
+              data-search-quick-title
+              className="m-0 text-[0.8125rem] font-semibold text-[#86868b] [font-family:var(--font-geist-sans),system-ui,sans-serif] [transform-origin:50%_100%] [will-change:transform]"
+            >
+              Quick Links
+            </p>
+            <ul className="mt-4 list-none space-y-1 p-0 sm:space-y-2" role="list">
+              {quickLinks.map(({ label, href, external }) => (
+                <li key={href + label} className="overflow-hidden">
+                  {external ? (
+                    <a
+                      href={href}
+                      data-search-link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={onClose}
+                      className="group flex items-baseline gap-2 py-1.5 text-[1.0625rem] font-semibold text-[#1d1d1f] no-underline transition-opacity hover:opacity-70 sm:text-[1.125rem] [font-family:var(--font-geist-sans),system-ui,sans-serif] [transform-origin:50%_100%] [will-change:transform]"
+                    >
+                      <span className="font-normal text-[#1d1d1f] opacity-80" aria-hidden>
+                        →
+                      </span>
+                      {label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={href}
+                      data-search-link
+                      onClick={onClose}
+                      className="group flex items-baseline gap-2 py-1.5 text-[1.0625rem] font-semibold text-[#1d1d1f] no-underline transition-opacity hover:opacity-70 sm:text-[1.125rem] [font-family:var(--font-geist-sans),system-ui,sans-serif] [transform-origin:50%_100%] [will-change:transform]"
+                    >
+                      <span className="font-normal text-[#1d1d1f] opacity-80" aria-hidden>
+                        →
+                      </span>
+                      {label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SiteHeader() {
+  const { itemCount, isReady } = useCart();
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  const staggeredItems = [
+    { label: "Home", ariaLabel: "Go to home", link: "/" },
+    { label: "Catalog", ariaLabel: "Browse the catalog", link: "/shop" },
+    {
+      label: "IndiaMART",
+      ariaLabel: "Mathi Enterprises on IndiaMART",
+      link: "https://www.indiamart.com/mathi-enterprises-tamilnadu/",
+    },
+    {
+      label: "Bag",
+      ariaLabel:
+        isReady && itemCount > 0
+          ? `Shopping bag, ${itemCount > 99 ? "99+" : itemCount} items`
+          : "Shopping bag",
+      link: "/cart",
+    },
+  ];
+
+  const mobileEndSlot = (
+    <>
+      <SearchOpenButton onOpen={() => setSearchOpen(true)} />
+      <CartBadgeLink />
+    </>
+  );
+
+  return (
+    <>
+      <AppleStyleSearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {/* Mobile / tablet: Apple-style bar + StaggeredMenu (GSAP panel) */}
+      <div className="lg:hidden">
+        <StaggeredMenu
+          scopeClassName="!z-[100]"
+          isFixed
+          position="right"
+          logoUrl="/logo.png"
+          brandName={BRAND_NAME}
+          menuButtonColor="#1d1d1f"
+          openMenuButtonColor="#1d1d1f"
+          changeMenuColorOnOpen={false}
+          displaySocials={false}
+          displayItemNumbering
+          colors={["#e8e8ed", "#d2d2d7", "#c4c4cc"]}
+          accentColor="#0071e3"
+          items={staggeredItems}
+          endSlot={mobileEndSlot}
+          headerClassName="h-11 border-b border-black/[0.08] bg-[rgba(251,251,253,0.82)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,251,253,0.72)] md:h-12"
+        />
+      </div>
+
+      {/* Desktop: unchanged centered nav + icons */}
+      <header
+        className={cn(
+          "fixed left-0 right-0 top-0 z-[100] hidden h-11 border-b border-black/[0.08] bg-[rgba(251,251,253,0.82)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,251,253,0.72)] lg:flex md:h-12"
+        )}
+      >
+        <div className="relative mx-auto flex h-full w-full max-w-[1024px] items-center justify-between px-4 lg:px-6">
+          <Link
+            href="/"
+            className="relative z-[110] flex min-w-0 max-w-[min(100%,20rem)] shrink-0 items-center gap-2 opacity-90 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0071e3]"
+            aria-label={`${BRAND_NAME} home`}
+          >
+            <Image
+              src="/logo.png"
+              alt=""
+              width={28}
+              height={28}
+              className="h-5 w-5 shrink-0 rounded-sm object-cover md:h-[22px] md:w-[22px]"
+              priority
+            />
+            <span className="truncate text-[13px] font-semibold leading-tight tracking-tight text-[#1d1d1f] md:text-sm">
+              {BRAND_NAME}
+            </span>
+          </Link>
+
+          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 lg:block" aria-label="Main">
+            <ul className="flex items-center gap-7 xl:gap-8">
+              {centerNav.map(({ href, label, external }) => (
+                <li key={`${href}-${label}`}>
+                  {external ? (
+                    <a
+                      href={href}
+                      className="whitespace-nowrap text-[12px] font-normal tracking-tight text-[#1d1d1f] opacity-90 transition hover:opacity-100"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={href}
+                      className="whitespace-nowrap text-[12px] font-normal tracking-tight text-[#1d1d1f] opacity-90 transition hover:opacity-100"
+                    >
+                      {label}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="relative z-[110] flex items-center gap-1 md:gap-2">
+            <SearchOpenButton onOpen={() => setSearchOpen(true)} />
+            <CartBadgeLink />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }

@@ -12,7 +12,7 @@ import {
 } from "react";
 import type { Product } from "@/data/products";
 
-const STORAGE_KEY = "mathis-cart-v1";
+const STORAGE_KEY = "mathi-cart-v2";
 
 export type CartLine = {
   productId: string;
@@ -75,11 +75,13 @@ export function CartProvider({ children, products }: { children: ReactNode; prod
   useEffect(() => {
     if (hydrated.current) return;
     hydrated.current = true;
+    const allowed = new Set(products.filter((p) => !p.priceOnRequest).map((p) => p.id));
+    const fromStore = loadFromStorage().filter((l) => allowed.has(l.productId));
     /* eslint-disable react-hooks/set-state-in-effect -- one-time client hydration from localStorage (unavailable on server) */
-    setLines(loadFromStorage());
+    setLines(fromStore);
     setIsReady(true);
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, []);
+  }, [products]);
 
   useEffect(() => {
     if (!isReady) return;
@@ -88,7 +90,9 @@ export function CartProvider({ children, products }: { children: ReactNode; prod
 
   const priceById = useMemo(() => {
     const m = new Map<string, number>();
-    products.forEach((p) => m.set(p.id, p.price));
+    products.forEach((p) => {
+      if (!p.priceOnRequest) m.set(p.id, p.price);
+    });
     return m;
   }, [products]);
 
@@ -104,6 +108,7 @@ export function CartProvider({ children, products }: { children: ReactNode; prod
   }, [lines, priceById]);
 
   const addItem = useCallback((product: Product, quantity = 1) => {
+    if (product.priceOnRequest) return;
     const q = Math.max(1, Math.floor(quantity));
     setLines((prev) => {
       const idx = prev.findIndex((l) => l.productId === product.id);

@@ -14,35 +14,35 @@
 .qtyLabel {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #b4afd9;
+  color: #525252;
 }
 
 .stepper {
   display: inline-flex;
   align-items: center;
-  border-radius: 0.65rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  border: 1px solid #e5e5e5;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.04);
+  background: #fff;
 }
 
 .stepBtn {
   width: 2.5rem;
   height: 2.5rem;
   border: none;
-  background: transparent;
-  color: #e8e4ff;
+  background: #fff;
+  color: #171717;
   font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .stepBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #f5f5f5;
 }
 
 .stepBtn:focus-visible {
-  outline: 2px solid #8b7cff;
+  outline: 2px solid #171717;
   outline-offset: -2px;
 }
 
@@ -50,10 +50,10 @@
   width: 3rem;
   text-align: center;
   border: none;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  background: transparent;
-  color: #fff;
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+  background: #fff;
+  color: #171717;
   font-size: 1rem;
   font-weight: 600;
   padding: 0.5rem 0;
@@ -67,7 +67,7 @@
 }
 
 .qtyInput:focus-visible {
-  outline: 2px solid #8b7cff;
+  outline: 2px solid #171717;
   outline-offset: -2px;
 }
 
@@ -79,7 +79,7 @@
 .toastVisible {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #a7f3d0;
+  color: #15803d;
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -89,4 +89,26 @@
 .toastVisible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.quoteNote {
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: #525252;
+  max-width: 28rem;
+  margin: 0;
+}
+
+.quoteLink {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #0066cc;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.quoteLink:hover {
+  color: #0077ed;
 }

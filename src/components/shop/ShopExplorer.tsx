@@ -10,11 +10,33 @@ type SortKey = "featured" | "price-asc" | "price-desc" | "name";
 
 type Props = {
   products: Product[];
+  /** From `/shop?cat=…` (URL-encoded category label) */
+  initialCategory?: string | null;
+  /** From `/shop?q=…` (header search overlay) */
+  initialQuery?: string | null;
 };
 
-export default function ShopExplorer({ products }: Props) {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<(typeof categories)[number]>("All");
+function normalizeInitialCategory(raw: string | null | undefined): (typeof categories)[number] {
+  if (!raw) return "All";
+  const decoded = decodeURIComponent(raw.trim());
+  const match = categories.find((c) => c === decoded);
+  return (match ?? "All") as (typeof categories)[number];
+}
+
+function normalizeInitialQuery(raw: string | null | undefined): string {
+  if (!raw) return "";
+  try {
+    return decodeURIComponent(raw.trim());
+  } catch {
+    return raw.trim();
+  }
+}
+
+export default function ShopExplorer({ products, initialCategory, initialQuery }: Props) {
+  const [query, setQuery] = useState(() => normalizeInitialQuery(initialQuery ?? null));
+  const [category, setCategory] = useState<(typeof categories)[number]>(() =>
+    normalizeInitialCategory(initialCategory ?? null),
+  );
   const [sort, setSort] = useState<SortKey>("featured");
 
   const filtered = useMemo(() => {

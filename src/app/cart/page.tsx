@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 
 export default function CartPage() {
   return (
-    <>
+    <div className="page-container">
       <h1 className="pageTitle">Cart</h1>
       <p className="pageLead">Update quantities or remove items. Subtotals reflect demo prices in USD.</p>
       <CartView products={products} />
-    </>
+    </div>
   );
 }

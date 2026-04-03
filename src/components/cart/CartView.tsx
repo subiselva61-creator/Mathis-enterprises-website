@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, formatProductPrice } from "@/lib/format";
 import { useCart } from "@/components/cart/cart-context";
 import { RippleButton, RippleButtonRipples } from "@/components/ui";
 import styles from "./CartView.module.css";
@@ -31,7 +31,7 @@ export default function CartView({ products }: Props) {
   }
 
   const subtotal = subtotalCents / 100;
-  const currency = products[0]?.currency ?? "USD";
+  const currency = products.find((p) => !p.priceOnRequest)?.currency ?? "INR";
 
   return (
     <div className={styles.layout}>
@@ -57,7 +57,10 @@ export default function CartView({ products }: Props) {
                 <Link href={`/shop/${product.slug}`} className={styles.name}>
                   {product.name}
                 </Link>
-                <p className={styles.unit}>{formatPrice(product.price, product.currency)} each</p>
+                <p className={styles.unit}>
+                  {formatProductPrice(product)}
+                  {product.priceBasis ? ` / ${product.priceBasis.toLowerCase()}` : ""}
+                </p>
                 <label className={styles.qtyLabel}>
                   <span className={styles.visuallyHidden}>Quantity for {product.name}</span>
                   <div className={styles.stepper}>
@@ -103,8 +106,8 @@ export default function CartView({ products }: Props) {
           <span>{formatPrice(subtotal, currency)}</span>
         </div>
         <p className={styles.checkoutNote}>
-          Checkout and payments are not connected yet. When you are ready, this button can open Stripe Checkout or your
-          preferred gateway.
+          Checkout is not connected — the bag is for planning quantities only. For orders, use IndiaMART or call your
+          Mathi Enterprises contact.
         </p>
         <RippleButton type="button" variant="primary" className={styles.checkoutBtn} disabled>
           Proceed to checkout

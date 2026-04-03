@@ -4,18 +4,31 @@ import { products } from "@/data/products";
 
 export const metadata: Metadata = {
   title: "Shop",
-  description: "Browse the Mathis Enterprises catalog — search, filter by category, and sort by price or name.",
+  description:
+    "Browse construction materials, cement, TMT bars, and plots from Mathi Enterprises, Chennai — filter by category or search by name.",
 };
 
-export default function ShopPage() {
+type Props = {
+  searchParams?: Promise<{ cat?: string; q?: string }>;
+};
+
+export default async function ShopPage({ searchParams }: Props) {
+  const sp = searchParams ? await searchParams : {};
+  const cat = sp.cat;
+  const q = sp.q;
   return (
-    <>
+    <div className="page-container">
       <h1 className="pageTitle">Shop</h1>
       <p className="pageLead">
-        Explore the full collection. Use search and filters to narrow down — your selections stay in your cart on this
-        device.
+        Construction materials, steel, cement, and land offerings from our IndiaMART-listed catalog. Prices are
+        indicative — confirm MOQ and latest rates before you order. Your cart stays on this device only.
       </p>
-      <ShopExplorer products={products} />
-    </>
+      <ShopExplorer
+        key={`${cat ?? "all"}-${q ?? ""}`}
+        products={products}
+        initialCategory={cat}
+        initialQuery={q}
+      />
+    </div>
   );
 }

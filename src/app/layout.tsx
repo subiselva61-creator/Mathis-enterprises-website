@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/cart/cart-context";
 import { products } from "@/data/products";
-import SiteBackground from "@/components/layout/SiteBackground";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 
@@ -17,13 +16,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["600"],
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "Mathis Enterprises",
-    template: "%s · Mathis Enterprises",
+    default: "Mathi Enterprises",
+    template: "%s · Mathi Enterprises",
   },
   description:
-    "Modern ecommerce demo — curated products for work and life. Shop a static catalog with a local cart; payments coming soon.",
+    "Mathi Enterprises — retail trader of construction materials, cement, TMT bars, aggregates, AAC blocks, and residential plots in Chennai, Tamil Nadu (GST 33ACPPV8797A2ZX). Browse our catalog; confirm quotes on IndiaMART.",
 };
 
 export default function RootLayout({
@@ -32,16 +37,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable}`}
+    >
       <body>
-        <SiteBackground />
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
         <div className="site-shell">
           <CartProvider products={products}>
             <SiteHeader />
-            <main id="main-content" className="main" tabIndex={-1}>
+            <main id="main-content" className="main main--apple" tabIndex={-1}>
               {children}
             </main>
             <SiteFooter />

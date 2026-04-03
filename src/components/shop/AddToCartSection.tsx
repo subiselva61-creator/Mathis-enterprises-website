@@ -19,6 +19,21 @@ export default function AddToCartSection({ product }: Props) {
     window.setTimeout(() => setFlash(false), 1400);
   };
 
+  if (product.priceOnRequest) {
+    return (
+      <div className={styles.wrap}>
+        <p className={styles.quoteNote}>
+          For pricing and availability, contact us on IndiaMART or call — this item is not sold through the demo cart.
+        </p>
+        {product.indiaMartUrl ? (
+          <a href={product.indiaMartUrl} className={styles.quoteLink} target="_blank" rel="noopener noreferrer">
+            Open on IndiaMART
+          </a>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className={styles.wrap}>
       <div className={styles.qtyRow}>

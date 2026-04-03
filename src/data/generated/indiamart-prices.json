@@ -1,0 +1,315 @@
+{
+  "syncedAt": "2026-04-03T00:48:55.985Z",
+  "source": "https://www.indiamart.com/mathi-enterprises-tamilnadu",
+  "entries": {
+    "bld-river-sand-25kg": {
+      "price": 85,
+      "priceBasis": "Cubic Feet",
+      "indiaMartProductId": "2857706343533"
+    },
+    "bld-interlock-brick": {
+      "price": 50,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2857275678533"
+    },
+    "cem-construction-river-sand": {
+      "price": 100,
+      "priceBasis": "Cubic Feet",
+      "indiaMartProductId": "2856794357533"
+    },
+    "cem-coromandel-opc": {
+      "price": 380,
+      "priceBasis": "Bag",
+      "indiaMartProductId": "2854059623497"
+    },
+    "cem-ramco-ppc": {
+      "price": 320,
+      "priceBasis": "Bag",
+      "indiaMartProductId": "2854059695448"
+    },
+    "cem-coromandel-csk": {
+      "price": 355,
+      "priceBasis": "Bag",
+      "indiaMartProductId": "2854059801262"
+    },
+    "cem-coromandel-bop": {
+      "price": 335,
+      "priceBasis": "Bag",
+      "indiaMartProductId": "2854059660348"
+    },
+    "cm-rect-red-partition-bricks": {
+      "price": 10.5,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2853093480162"
+    },
+    "cm-rect-wire-cut-bricks": {
+      "price": 12.5,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2853106816055"
+    },
+    "cm-partition-fly-ash-bricks": {
+      "price": 8,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2853093480673"
+    },
+    "cm-a-grade-brown-river-sand": {
+      "price": 85,
+      "priceBasis": "Cubic Feet",
+      "indiaMartProductId": "2853107090330"
+    },
+    "cm-fly-ash-bricks": {
+      "price": 8.5,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2853873235062"
+    },
+    "cem-dalmia-dsp": {
+      "price": 345,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2854059750130"
+    },
+    "cem-dalmia-ppc": {
+      "price": 320,
+      "priceBasis": "Bag",
+      "indiaMartProductId": "2854059546130"
+    },
+    "new-birla-aac": {
+      "price": 49,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2857275687448"
+    },
+    "new-interlock-6in": {
+      "price": 55,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2857706415862"
+    },
+    "new-viki-fe550d": {
+      "price": 60,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2857995855188"
+    },
+    "new-suryadev-fe550d": {
+      "price": 67,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2857995853755"
+    },
+    "new-tata-tiscon-crs": {
+      "price": 49,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2857995853330"
+    },
+    "new-tata-tiscon-550d": {
+      "price": 67,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2857995853233"
+    },
+    "new-zig-zag-paver": {
+      "price": 55,
+      "priceBasis": "sq ft",
+      "indiaMartProductId": "2857706481573"
+    },
+    "plot-villa-plots-sale": {
+      "price": 399,
+      "priceBasis": "sq ft",
+      "indiaMartProductId": "2853871057348"
+    },
+    "plot-farm-house-sale": {
+      "price": 299,
+      "priceBasis": "sq ft",
+      "indiaMartProductId": "2853883407088"
+    },
+    "cem-ramco-bop": {
+      "price": 335,
+      "priceBasis": "Bag",
+      "indiaMartProductId": "2854059718162"
+    },
+    "plot-real-estate-plots-lands": {
+      "price": 399,
+      "priceBasis": "sq ft",
+      "indiaMartProductId": "2853883320673"
+    },
+    "plot-farm-house-plots": {
+      "price": 299,
+      "priceBasis": "sq ft",
+      "indiaMartProductId": "2853883443562"
+    },
+    "plot-residential-plot": {
+      "price": 399,
+      "priceBasis": "sq ft",
+      "indiaMartProductId": "2853871002488"
+    },
+    "cm-solid-concrete-block": {
+      "price": 40,
+      "priceBasis": "Piece",
+      "indiaMartProductId": "2855100701688"
+    },
+    "tmt-8mm-arun": {
+      "price": 67,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857961622230"
+    },
+    "tmt-pulkit-crs": {
+      "price": 67,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995855362"
+    },
+    "tmt-pfi-tirumala": {
+      "price": 49,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995855448"
+    },
+    "tmt-shyam": {
+      "price": 65,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995855255"
+    },
+    "tmt-jindal": {
+      "price": 50,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995855548"
+    },
+    "tmt-suryadev-crs": {
+      "price": 50,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995853648"
+    },
+    "tmt-vizag": {
+      "price": 50,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995854433"
+    },
+    "tmt-ars-crs": {
+      "price": 49,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995855097"
+    },
+    "tmt-bright": {
+      "price": 60,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995853891"
+    },
+    "tmt-suryadev-fe550": {
+      "price": 49,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995853933"
+    },
+    "tmt-suryadev-fe500d": {
+      "price": 60,
+      "priceBasis": "Tonne",
+      "indiaMartProductId": "2857995854048"
+    },
+    "tmt-ars-fe550d": {
+      "price": 65,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995854997"
+    },
+    "tmt-jsw-neosteel": {
+      "price": 65,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995853530"
+    },
+    "tmt-sail": {
+      "price": 60,
+      "priceBasis": "Kg",
+      "indiaMartProductId": "2857995854588"
+    }
+  },
+  "skipped": [
+    {
+      "productId": "cm-cellocon-aac",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-wire-cut-bricks",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-gray-a-grade-m-sand",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-m20-rmc",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-brown-a1-m-sand",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-gray-construction-m-sand",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-construction-red-brick",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-aggregate-40mm",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-aggregate-20mm",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-aggregate-12mm",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-grey-p-sand",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-brown-filling-sand-construction",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-aggregate-6mm",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-brown-filling-sand",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-renacon-aac",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-brown-crushed-stone",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-gray-concrete-bricks",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-crushed-red-brick-stone",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-brown-rubbish-sand",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-gravel-crushed-stone",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "cm-coromandel-ppc",
+      "reason": "missing_or_invalid_indiamart_fragment"
+    },
+    {
+      "productId": "res-services-general",
+      "reason": "priceOnRequest"
+    },
+    {
+      "productId": "res-residential-land-plot",
+      "reason": "priceOnRequest"
+    },
+    {
+      "productId": "res-house-land-plot",
+      "reason": "priceOnRequest"
+    }
+  ],
+  "errors": []
+}
