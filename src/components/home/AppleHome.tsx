@@ -63,19 +63,25 @@ function HeroModule({
         id={`hero-${product.slug}`}
         className="mb-2 text-[32px] font-semibold leading-[1.05] tracking-tight md:text-[56px] lg:text-[64px]"
       >
+        {/* Gradient text uses background-clip; plain text on small screens avoids low-contrast / invisible text in some mobile engines. */}
         {isRedBricksHero && !reducedMotion ? (
-          <ShinyText
-            text={product.name}
-            speed={2.5}
-            once
-            delay={0}
-            color="#2a2a2a"
-            shineColor="#ffffff"
-            spread={120}
-            direction="left"
-            pauseOnHover={false}
-            disabled={false}
-          />
+          <>
+            <span className="md:hidden">{product.name}</span>
+            <span className="hidden md:inline">
+              <ShinyText
+                text={product.name}
+                speed={2.5}
+                once
+                delay={0}
+                color="#2a2a2a"
+                shineColor="#ffffff"
+                spread={120}
+                direction="left"
+                pauseOnHover={false}
+                disabled={false}
+              />
+            </span>
+          </>
         ) : (
           product.name
         )}
@@ -92,18 +98,23 @@ function HeroModule({
       <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
         <Link href={`/shop/${product.slug}`} className={pillPrimary}>
           {isRedBricksHero && !reducedMotion ? (
-            <ShinyText
-              text="Buy now"
-              speed={2.5}
-              once
-              delay={0}
-              color="#dbe4ff"
-              shineColor="#ffffff"
-              spread={120}
-              direction="left"
-              pauseOnHover={false}
-              disabled={false}
-            />
+            <>
+              <span className="md:hidden">Buy now</span>
+              <span className="hidden md:inline">
+                <ShinyText
+                  text="Buy now"
+                  speed={2.5}
+                  once
+                  delay={0}
+                  color="#dbe4ff"
+                  shineColor="#ffffff"
+                  spread={120}
+                  direction="left"
+                  pauseOnHover={false}
+                  disabled={false}
+                />
+              </span>
+            </>
           ) : (
             "Buy now"
           )}

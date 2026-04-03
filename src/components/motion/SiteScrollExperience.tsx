@@ -319,7 +319,7 @@ export default function SiteScrollExperience({ children }: { children: React.Rea
       <div className="relative z-[1] flex min-h-0 flex-1 flex-col">{children}</div>
       {!reducedMotion ? (
         <div
-          className="site-parallax-atmosphere pointer-events-none fixed inset-0 z-[40] overflow-hidden mix-blend-soft-light"
+          className="site-parallax-atmosphere pointer-events-none fixed inset-0 z-[40] hidden overflow-hidden mix-blend-soft-light md:block"
           aria-hidden
         >
           <div

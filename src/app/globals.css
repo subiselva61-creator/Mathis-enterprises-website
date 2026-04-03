@@ -169,7 +169,7 @@ a {
 
 html,
 body.app-root {
-  color-scheme: light;
+  color-scheme: light only;
 }
 
 @layer base {

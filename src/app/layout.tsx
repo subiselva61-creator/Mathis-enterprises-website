@@ -11,9 +11,13 @@ import DesktopMobileGate from "@/components/layout/DesktopMobileGate";
 /** Merged catalog reads Supabase; must not freeze at build time. */
 export const dynamic = "force-dynamic";
 
-/** Force light chrome (scrollbars, form controls) regardless of system appearance. */
+/**
+ * Lock the document to a light palette so mobile browsers (Chrome auto-dark, etc.)
+ * do not remap colors when the user has system dark mode enabled.
+ */
 export const viewport: Viewport = {
-  colorScheme: "light",
+  colorScheme: "only light",
+  themeColor: "#ffffff",
 };
 
 export const metadata: Metadata = {
@@ -23,6 +27,9 @@ export const metadata: Metadata = {
   },
   description:
     "Mathi Enterprises — retail trader of construction materials, cement, TMT bars, aggregates, AAC blocks, and residential plots in Chennai, Tamil Nadu (GST 33ACPPV8797A2ZX). Browse our catalog; confirm quotes on IndiaMART.",
+  appleWebApp: {
+    statusBarStyle: "default",
+  },
 };
 
 const dmSans = DM_Sans({
