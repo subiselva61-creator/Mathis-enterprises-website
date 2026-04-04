@@ -24,6 +24,15 @@ function safeNextPath(raw: string | null): string {
   return raw;
 }
 
+function loginOauthFailRedirect(origin: string, detail?: string | null) {
+  const u = new URL("/login", origin);
+  u.searchParams.set("error", "oauth");
+  if (detail?.trim()) {
+    u.searchParams.set("reason", detail.trim().slice(0, 400));
+  }
+  return NextResponse.redirect(u);
+}
+
 export async function GET(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -36,32 +45,40 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=config", origin));
   }
 
-  if (code) {
-    const redirectUrl = new URL(next, origin);
-    const response = NextResponse.redirect(redirectUrl);
-
-    const supabase = createServerClient(url, anon, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
-        },
-      },
-    });
-
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return response;
+  /** OAuth provider or Supabase returned an error instead of a code. */
+  if (!code) {
+    const providerErr =
+      searchParams.get("error_description")?.trim() || searchParams.get("error")?.trim() || null;
+    if (providerErr) {
+      return loginOauthFailRedirect(origin, providerErr);
     }
-
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[auth/callback] exchangeCodeForSession failed:", error.message);
-    }
+    return loginOauthFailRedirect(origin);
   }
 
-  return NextResponse.redirect(new URL("/login?error=oauth", origin));
+  const redirectUrl = new URL(next, origin);
+  const response = NextResponse.redirect(redirectUrl);
+
+  const supabase = createServerClient(url, anon, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          response.cookies.set(name, value, options);
+        });
+      },
+    },
+  });
+
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  if (!error) {
+    return response;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    console.warn("[auth/callback] exchangeCodeForSession failed:", error.message);
+  }
+
+  return loginOauthFailRedirect(origin, error.message);
 }

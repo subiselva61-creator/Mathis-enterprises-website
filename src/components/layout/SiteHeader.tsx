@@ -27,7 +27,7 @@ function UserNavLink({ isSignedIn }: { isSignedIn: boolean }) {
   return (
     <Link
       href={isSignedIn ? "/account" : "/login"}
-      className="relative flex h-10 w-10 items-center justify-center text-[#1d1d1f] opacity-90 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] md:h-9 md:w-9"
+      className="relative flex h-10 w-10 items-center justify-center text-[#1d1d1f] opacity-90 transition-opacity duration-150 hover:opacity-100 active:opacity-65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] md:h-9 md:w-9"
       aria-label={isSignedIn ? "Account" : "Sign in"}
     >
       <User className="h-[19px] w-[19px]" strokeWidth={1.5} />
@@ -40,7 +40,7 @@ function CartBadgeLink() {
   return (
     <Link
       href="/cart"
-      className="relative flex h-10 w-10 items-center justify-center text-[#1d1d1f] opacity-90 hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] md:h-9 md:w-9"
+      className="relative flex h-10 w-10 items-center justify-center text-[#1d1d1f] opacity-90 transition-opacity duration-150 hover:opacity-100 active:opacity-65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] md:h-9 md:w-9"
       aria-label={
         isReady && itemCount > 0
           ? `Shopping bag, ${itemCount > 99 ? "99+" : itemCount} items`
@@ -74,7 +74,7 @@ function SearchOpenButton({
       type="button"
       onClick={onOpen}
       className={cn(
-        "inline-flex h-10 w-10 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[#1d1d1f] opacity-90 shadow-none ring-0 [-webkit-appearance:none] appearance-none hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] [&::-moz-focus-inner]:border-0 md:h-9 md:w-9",
+        "inline-flex h-10 w-10 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[#1d1d1f] opacity-90 shadow-none ring-0 transition-opacity duration-150 [-webkit-appearance:none] appearance-none hover:opacity-100 active:opacity-65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0071e3] [&::-moz-focus-inner]:border-0 md:h-9 md:w-9",
         className
       )}
       aria-label="Search store"
@@ -150,6 +150,14 @@ function AppleStyleSearchOverlay({
 
     if (!surface) return;
 
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const compactMotion =
+      typeof window !== "undefined" &&
+      (window.matchMedia("(max-width: 768px)").matches ||
+        window.matchMedia("(pointer: coarse)").matches);
+
     if (open) {
       gsap.set([...prelayers, surface], { xPercent: 100 });
       const labelOrigin = { transformOrigin: "50% 100%" as const };
@@ -159,6 +167,27 @@ function AppleStyleSearchOverlay({
       if (linkEls.length)
         gsap.set(linkEls, { ...labelOrigin, yPercent: 140, rotate: 10, opacity: 1 });
 
+      if (reduceMotion) {
+        gsap.set([...prelayers, surface], { xPercent: 0 });
+        if (closeEl) gsap.set(closeEl, { opacity: 1, y: 0 });
+        if (formEl) gsap.set(formEl, { yPercent: 0, rotate: 0, opacity: 1 });
+        if (quickTitle) gsap.set(quickTitle, { yPercent: 0, rotate: 0 });
+        if (linkEls.length) gsap.set(linkEls, { yPercent: 0, rotate: 0, opacity: 1 });
+        requestAnimationFrame(() => inputRef.current?.focus());
+        return () => {
+          animTlRef.current?.kill();
+          animTlRef.current = null;
+        };
+      }
+
+      const preDur = compactMotion ? 0.2 : 0.5;
+      const preStagger = compactMotion ? 0.03 : 0.07;
+      const preGap = compactMotion ? 0.04 : 0.08;
+      const panelDuration = compactMotion ? 0.3 : 0.65;
+      const contentDur = compactMotion ? 0.34 : 1;
+      const closeDur = compactMotion ? 0.22 : 0.45;
+      const linkStagger = compactMotion ? 0.03 : 0.1;
+
       const tl = gsap.timeline({
         defaults: { ease: "power4.out" },
         onComplete: () => {
@@ -167,31 +196,30 @@ function AppleStyleSearchOverlay({
       });
 
       prelayers.forEach((layer, i) => {
-        tl.fromTo(layer, { xPercent: 100 }, { xPercent: 0, duration: 0.5 }, i * 0.07);
+        tl.fromTo(layer, { xPercent: 100 }, { xPercent: 0, duration: preDur }, i * preStagger);
       });
 
-      const lastPreT = prelayers.length ? (prelayers.length - 1) * 0.07 : 0;
-      const surfaceStart = lastPreT + (prelayers.length ? 0.08 : 0);
-      const panelDuration = 0.65;
+      const lastPreT = prelayers.length ? (prelayers.length - 1) * preStagger : 0;
+      const surfaceStart = lastPreT + (prelayers.length ? preGap : 0);
 
       tl.fromTo(surface, { xPercent: 100 }, { xPercent: 0, duration: panelDuration }, surfaceStart);
 
-      const contentStart = surfaceStart + panelDuration * 0.15;
+      const contentStart = surfaceStart + panelDuration * (compactMotion ? 0.12 : 0.15);
 
       if (closeEl) {
-        tl.to(closeEl, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, contentStart);
+        tl.to(closeEl, { opacity: 1, y: 0, duration: closeDur, ease: "power3.out" }, contentStart);
       }
       if (formEl) {
         tl.to(
           formEl,
-          { yPercent: 0, rotate: 0, duration: 1, ease: "power4.out" },
+          { yPercent: 0, rotate: 0, duration: contentDur, ease: "power4.out" },
           contentStart + 0.04
         );
       }
       if (quickTitle) {
         tl.to(
           quickTitle,
-          { yPercent: 0, rotate: 0, duration: 1, ease: "power4.out" },
+          { yPercent: 0, rotate: 0, duration: contentDur, ease: "power4.out" },
           contentStart + 0.1
         );
       }
@@ -201,9 +229,9 @@ function AppleStyleSearchOverlay({
           {
             yPercent: 0,
             rotate: 0,
-            duration: 1,
+            duration: contentDur,
             ease: "power4.out",
-            stagger: { each: 0.1, from: "start" },
+            stagger: { each: linkStagger, from: "start" },
           },
           contentStart + 0.16
         );
@@ -212,20 +240,37 @@ function AppleStyleSearchOverlay({
       animTlRef.current = tl;
       tl.play(0);
     } else {
+      if (reduceMotion) {
+        queueMicrotask(() => setShouldMount(false));
+        return () => {
+          animTlRef.current?.kill();
+          animTlRef.current = null;
+        };
+      }
+
+      const outLinkDur = compactMotion ? 0.14 : 0.28;
+      const outLinkSt = compactMotion ? 0.02 : 0.04;
+      const outTitleDur = compactMotion ? 0.14 : 0.26;
+      const outFormDur = compactMotion ? 0.16 : 0.3;
+      const outCloseDur = compactMotion ? 0.14 : 0.22;
+      const outSurfaceDur = compactMotion ? 0.2 : 0.34;
+      const outPreDur = compactMotion ? 0.18 : 0.3;
+      const outPreSt = compactMotion ? 0.03 : 0.05;
+
       const tl = gsap.timeline({
         defaults: { ease: "power3.in" },
         onComplete: () => setShouldMount(false),
       });
 
-      tl.to(linkEls, { yPercent: 90, rotate: 6, duration: 0.28, stagger: { each: 0.04, from: "end" } }, 0);
-      if (quickTitle) tl.to(quickTitle, { yPercent: 90, rotate: 5, duration: 0.26 }, 0.04);
-      if (formEl) tl.to(formEl, { yPercent: 90, rotate: 6, duration: 0.3 }, 0.06);
-      if (closeEl) tl.to(closeEl, { opacity: 0, y: -10, duration: 0.22, ease: "power2.in" }, 0.04);
+      tl.to(linkEls, { yPercent: 90, rotate: 6, duration: outLinkDur, stagger: { each: outLinkSt, from: "end" } }, 0);
+      if (quickTitle) tl.to(quickTitle, { yPercent: 90, rotate: 5, duration: outTitleDur }, 0.04);
+      if (formEl) tl.to(formEl, { yPercent: 90, rotate: 6, duration: outFormDur }, 0.06);
+      if (closeEl) tl.to(closeEl, { opacity: 0, y: -10, duration: outCloseDur, ease: "power2.in" }, 0.04);
 
-      tl.to(surface, { xPercent: 100, duration: 0.34 }, 0.1);
+      tl.to(surface, { xPercent: 100, duration: outSurfaceDur }, 0.1);
       prelayers.forEach((layer, i) => {
         const rev = prelayers.length - 1 - i;
-        tl.to(layer, { xPercent: 100, duration: 0.3 }, 0.14 + rev * 0.05);
+        tl.to(layer, { xPercent: 100, duration: outPreDur }, 0.14 + rev * outPreSt);
       });
 
       animTlRef.current = tl;

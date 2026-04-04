@@ -37,6 +37,12 @@ function isExplicitUnconfirmedError(message: string): boolean {
 
 const DEFAULT_POST_AUTH = "/shop";
 
+/** Where to tell users to set keys: local file vs hosting dashboard. */
+const ENV_SETUP_HINT =
+  process.env.NODE_ENV === "development"
+    ? ".env.local"
+    : "your host’s environment variables (for Vercel: Project → Settings → Environment Variables), then redeploy";
+
 function safePostAuthPath(path: string | undefined): string {
   if (!path || !path.startsWith("/") || path.startsWith("//") || path.includes("://")) {
     return DEFAULT_POST_AUTH;
@@ -155,12 +161,20 @@ function GoogleIcon({ className }: { className?: string }) {
 type Props = {
   initialMode: Mode;
   urlError?: string;
+  /** Supabase/provider message from /auth/callback when error=oauth (debugging). */
+  oauthErrorDetail?: string;
   registered?: boolean;
   /** Path after successful sign-in (must be same-origin, e.g. /account). */
   postAuthPath?: string;
 };
 
-export default function AuthCard({ initialMode, urlError, registered, postAuthPath }: Props) {
+export default function AuthCard({
+  initialMode,
+  urlError,
+  oauthErrorDetail,
+  registered,
+  postAuthPath,
+}: Props) {
   const router = useRouter();
   const nextPath = safePostAuthPath(postAuthPath);
   const buildAuthCallbackUrl = useCallback(() => {
@@ -185,23 +199,26 @@ export default function AuthCard({ initialMode, urlError, registered, postAuthPa
       <p className="rounded-xl border border-amber-200/80 bg-amber-50/90 px-4 py-3 text-sm leading-relaxed text-amber-950">
         Supabase is not configured. Add{" "}
         <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to{" "}
-        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">.env.local</code>.
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>{" "}
+        to {ENV_SETUP_HINT}.
       </p>
     ) : null;
 
   const oauthBanner =
     urlError === "oauth" ? (
-      <p className="rounded-xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-sm leading-relaxed text-red-950">
-        We could not finish signing you in. Try again or use email and password.
-      </p>
+      <div className="rounded-xl border border-red-200/80 bg-red-50/90 px-4 py-3 text-sm leading-relaxed text-red-950">
+        <p>We could not finish signing you in. Try again or use email and password.</p>
+        {oauthErrorDetail ? (
+          <p className="mt-2 break-words font-mono text-[13px] text-red-900/90">{oauthErrorDetail}</p>
+        ) : null}
+      </div>
     ) : null;
 
   const onResendConfirmation = useCallback(async () => {
     setResendFeedback(null);
     const supabase = getSupabase();
     if (!supabase) {
-      setResendFeedback("Sign-in is not configured.");
+      setResendFeedback(`Sign-in is not configured. Add Supabase keys to ${ENV_SETUP_HINT}.`);
       return;
     }
     const trimmed = email.trim();
@@ -228,7 +245,7 @@ export default function AuthCard({ initialMode, urlError, registered, postAuthPa
     setResendFeedback(null);
     const supabase = getSupabase();
     if (!supabase) {
-      setError("Sign-in is not configured.");
+      setError(`Sign-in is not configured. Add Supabase keys to ${ENV_SETUP_HINT}.`);
       return;
     }
     setPending(true);
@@ -249,7 +266,7 @@ export default function AuthCard({ initialMode, urlError, registered, postAuthPa
     setResendFeedback(null);
     const supabase = getSupabase();
     if (!supabase) {
-      setError("Sign-in is not configured.");
+      setError(`Sign-in is not configured. Add Supabase keys to ${ENV_SETUP_HINT}.`);
       return;
     }
     setPending(true);
@@ -278,7 +295,7 @@ export default function AuthCard({ initialMode, urlError, registered, postAuthPa
     setAwaitingEmailConfirm(false);
     const supabase = getSupabase();
     if (!supabase) {
-      setError("Sign-up is not configured.");
+      setError(`Sign-up is not configured. Add Supabase keys to ${ENV_SETUP_HINT}.`);
       return;
     }
     setPending(true);

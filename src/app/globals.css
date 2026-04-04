@@ -38,6 +38,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Mobile WebKit: remove default blue tap flash; keep keyboard :focus-visible from @layer base */
+a,
+button,
+input,
+textarea,
+select,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+@media (pointer: coarse) {
+  a:focus-visible,
+  button:focus-visible {
+    outline-offset: 1px;
+  }
+}
+
 .site-shell {
   position: relative;
   display: flex;
@@ -120,24 +143,25 @@ a {
   scroll-margin-top: calc(var(--site-header-height) + 8px);
 }
 
-/* Product detail (/shop/[slug]): entrance when navigating from Buy now, catalog, etc. */
-@keyframes shop-product-route-enter {
+/* Route enter: applied by app/template + RouteEnterShell (all non-admin navigations) */
+/* `to` must use transform: none — translate3d(0,0,0) traps fixed overlays (e.g. page blur). */
+@keyframes route-page-enter {
   from {
     opacity: 0;
     transform: translate3d(0, 18px, 0);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: none;
   }
 }
 
-.shop-product-route-enter {
-  animation: shop-product-route-enter 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+.route-page-enter {
+  animation: route-page-enter 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shop-product-route-enter {
+  .route-page-enter {
     animation: none;
   }
 }

@@ -102,6 +102,25 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   const itemEntranceTweenRef = useRef<gsap.core.Tween | null>(null);
 
+  const resetPanelClosedState = useCallback(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    const itemEls = Array.from(panel.querySelectorAll(".sm-panel-itemLabel")) as HTMLElement[];
+    if (itemEls.length) gsap.set(itemEls, { yPercent: 140, rotate: 10 });
+
+    const numberEls = Array.from(
+      panel.querySelectorAll(".sm-panel-list[data-numbering] .sm-panel-item")
+    ) as HTMLElement[];
+    if (numberEls.length) gsap.set(numberEls, smNumOpacityVars(0));
+
+    const socialTitle = panel.querySelector(".sm-socials-title") as HTMLElement | null;
+    const socialLinks = Array.from(panel.querySelectorAll(".sm-socials-link")) as HTMLElement[];
+    if (socialTitle) gsap.set(socialTitle, { opacity: 0 });
+    if (socialLinks.length) gsap.set(socialLinks, { y: 25, opacity: 0 });
+
+    busyRef.current = false;
+  }, []);
+
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const panel = panelRef.current;
@@ -288,25 +307,12 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       xPercent: offscreen,
       duration: 0.09,
       ease: "power2.in",
-      overwrite: 'auto',
+      overwrite: "auto",
       onComplete: () => {
-        const itemEls = Array.from(panel.querySelectorAll('.sm-panel-itemLabel')) as HTMLElement[];
-        if (itemEls.length) gsap.set(itemEls, { yPercent: 140, rotate: 10 });
-
-        const numberEls = Array.from(
-          panel.querySelectorAll('.sm-panel-list[data-numbering] .sm-panel-item')
-        ) as HTMLElement[];
-        if (numberEls.length) gsap.set(numberEls, smNumOpacityVars(0));
-
-        const socialTitle = panel.querySelector('.sm-socials-title') as HTMLElement | null;
-        const socialLinks = Array.from(panel.querySelectorAll('.sm-socials-link')) as HTMLElement[];
-        if (socialTitle) gsap.set(socialTitle, { opacity: 0 });
-        if (socialLinks.length) gsap.set(socialLinks, { y: 25, opacity: 0 });
-
-        busyRef.current = false;
-      }
+        resetPanelClosedState();
+      },
     });
-  }, [position]);
+  }, [position, resetPanelClosedState]);
 
   const animateIcon = useCallback((opening: boolean) => {
     const icon = iconRef.current;
@@ -387,18 +393,54 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     animateText(target);
   }, [playOpen, playClose, animateIcon, animateColor, animateText, onMenuOpen, onMenuClose]);
 
-  const closeMenu = useCallback(() => {
-    if (openRef.current) {
+  const closeMenu = useCallback(
+    (opts?: { instant?: boolean }) => {
+      if (!openRef.current) return;
+      const instant = opts?.instant ?? false;
+
       openRef.current = false;
       setOpen(false);
       setDrilledIndex(null);
       onMenuClose?.();
-      playClose();
-      animateIcon(false);
+
+      openTlRef.current?.kill();
+      openTlRef.current = null;
+      itemEntranceTweenRef.current?.kill();
+      spinTweenRef.current?.kill();
+      colorTweenRef.current?.kill();
+
+      if (instant) {
+        closeTweenRef.current?.kill();
+        closeTweenRef.current = null;
+
+        const panel = panelRef.current;
+        const layers = preLayerElsRef.current;
+        const offscreen = position === "left" ? -100 : 100;
+        if (panel) {
+          gsap.set([...layers, panel], { xPercent: offscreen });
+          resetPanelClosedState();
+        } else {
+          busyRef.current = false;
+        }
+
+        const h = plusHRef.current;
+        const v = plusVRef.current;
+        const icon = iconRef.current;
+        if (h && v && icon) {
+          gsap.set(h, { rotate: 0 });
+          gsap.set(v, { rotate: 90 });
+          gsap.set(icon, { rotate: 0 });
+        }
+      } else {
+        playClose();
+        animateIcon(false);
+      }
+
       animateColor(false);
       animateText(false);
-    }
-  }, [playClose, animateIcon, animateColor, animateText, onMenuClose]);
+    },
+    [playClose, animateIcon, animateColor, animateText, onMenuClose, position, resetPanelClosedState, setDrilledIndex]
+  );
 
   React.useEffect(() => {
     if (!closeOnClickAway || !open) return;
@@ -476,7 +518,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               href="/"
               className="sm-logo flex min-w-0 max-w-[min(100%,18rem)] shrink items-center gap-2 select-none pointer-events-auto"
               aria-label={brandName ? `${brandName} home` : "Home"}
-              onClick={() => closeMenu()}
+              onClick={() => closeMenu({ instant: true })}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- logo URL is configurable and may be non-optimized */}
               <img
@@ -562,7 +604,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                     {items && items.length ? (
                       items.map((it, idx) => {
                         const itemClass =
-                          "sm-panel-item relative inline-block cursor-pointer text-black font-semibold uppercase leading-none tracking-[-2px] no-underline pr-[1.4em] transition-[background,color] duration-150 ease-linear max-w-full text-[clamp(2.25rem,12vw,3.75rem)] min-[420px]:text-[clamp(2.75rem,10vw,4rem)]";
+                          "sm-panel-item relative inline-block cursor-pointer text-black font-semibold uppercase leading-none tracking-[-2px] no-underline pr-[1.4em] transition-[background,color,opacity] duration-150 ease-linear active:opacity-75 max-w-full text-[clamp(2.25rem,12vw,3.75rem)] min-[420px]:text-[clamp(2.75rem,10vw,4rem)]";
                         const label = (
                           <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
                             {it.label}
@@ -603,7 +645,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                                 className={itemClass}
                                 aria-label={it.ariaLabel}
                                 data-index={idx + 1}
-                                onClick={() => closeMenu()}
+                                onClick={() => closeMenu({ instant: true })}
                               >
                                 {label}
                               </Link>
@@ -669,7 +711,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                       <button
                         ref={drillBackRef}
                         type="button"
-                        className="sm-drill-back mb-5 flex w-max items-center gap-0.5 rounded-md border-0 bg-transparent py-2 pl-0 pr-3 text-[1.0625rem] font-normal text-[#1d1d1f] transition-opacity hover:opacity-65 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sm-accent,#0071e3)]"
+                        className="sm-drill-back mb-5 flex w-max items-center gap-0.5 rounded-md border-0 bg-transparent py-2 pl-0 pr-3 text-[1.0625rem] font-normal text-[#1d1d1f] transition-opacity duration-150 hover:opacity-65 active:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sm-accent,#0071e3)]"
                         onClick={() => setDrilledIndex(null)}
                         aria-label="Back to main menu"
                       >
@@ -696,9 +738,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                           <li key="__explore-all">
                             <Link
                               href={drilledItem.link}
-                              className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-colors hover:text-[var(--sm-accent,#0071e3)] sm:text-[1.875rem]"
+                              className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-[color,opacity] duration-150 hover:text-[var(--sm-accent,#0071e3)] active:opacity-75 sm:text-[1.875rem]"
                               aria-label={`Explore all ${drilledItem.label}`}
-                              onClick={() => closeMenu()}
+                              onClick={() => closeMenu({ instant: true })}
                             >
                               Explore all {drilledItem.label.toLowerCase()}
                             </Link>
@@ -709,16 +751,16 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                             {isInternalPath(sub.link) ? (
                               <Link
                                 href={sub.link}
-                                className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-colors hover:text-[var(--sm-accent,#0071e3)] sm:text-[1.875rem]"
+                                className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-[color,opacity] duration-150 hover:text-[var(--sm-accent,#0071e3)] active:opacity-75 sm:text-[1.875rem]"
                                 aria-label={sub.ariaLabel}
-                                onClick={() => closeMenu()}
+                                onClick={() => closeMenu({ instant: true })}
                               >
                                 {sub.label}
                               </Link>
                             ) : (
                               <a
                                 href={sub.link}
-                                className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-colors hover:text-[var(--sm-accent,#0071e3)] sm:text-[1.875rem]"
+                                className="sm-drill-link block rounded-lg py-2.5 pr-2 text-[1.625rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[#1d1d1f] no-underline transition-[color,opacity] duration-150 hover:text-[var(--sm-accent,#0071e3)] active:opacity-75 sm:text-[1.875rem]"
                                 aria-label={sub.ariaLabel}
                                 target="_blank"
                                 rel="noopener noreferrer"

@@ -3,8 +3,9 @@ import Image from "next/image";
 import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import AddToCartSection from "@/components/shop/AddToCartSection";
+import RelatedProductSuggestions from "@/components/shop/RelatedProductSuggestions";
 import { staticProductSlugs } from "@/data/products";
-import { getMergedProductBySlug } from "@/lib/catalog";
+import { getMergedProductBySlug, getRelatedProductsInCategory } from "@/lib/catalog";
 import { formatProductPrice } from "@/lib/format";
 import styles from "./product.module.css";
 
@@ -35,6 +36,8 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const product = await getMergedProductBySlug(slug);
   if (!product) notFound();
+
+  const relatedInCategory = await getRelatedProductsInCategory(slug, product.category, 3);
 
   const [primary, ...rest] = product.images;
   const isRedPartitionBrickHero = slug === RED_PARTITION_BRICK_SLUG;
@@ -151,9 +154,13 @@ export default async function ProductPage({ params }: Props) {
           {isRedPartitionBrickHero ? (
             <div id="red-brick-purchase" className={styles.purchaseBrickAnchor}>
               <AddToCartSection product={product} />
+              <RelatedProductSuggestions products={relatedInCategory} />
             </div>
           ) : (
-            <AddToCartSection product={product} />
+            <>
+              <AddToCartSection product={product} />
+              <RelatedProductSuggestions products={relatedInCategory} />
+            </>
           )}
         </div>
       </article>

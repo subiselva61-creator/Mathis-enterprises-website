@@ -2,7 +2,13 @@ import Link from "next/link";
 import AuthCard from "./AuthCard";
 
 type Props = {
-  searchParams?: Promise<{ mode?: string; error?: string; registered?: string; next?: string }>;
+  searchParams?: Promise<{
+    mode?: string;
+    error?: string;
+    reason?: string;
+    registered?: string;
+    next?: string;
+  }>;
 };
 
 function safePostAuthPath(next: string | undefined): string | undefined {
@@ -36,6 +42,7 @@ export default async function LoginPage({ searchParams }: Props) {
         <AuthCard
           initialMode={initialMode}
           urlError={sp.error}
+          oauthErrorDetail={sp.reason}
           registered={sp.registered === "1"}
           postAuthPath={postAuthPath}
         />

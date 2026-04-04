@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { gsap } from "gsap";
 import type { Product } from "@/data/products";
 import { brickProductsFrom, isBrickProduct } from "@/data/products";
@@ -226,6 +227,11 @@ export default function AppleHome({ products: catalog }: { products: Product[] }
   const reducedMotion = usePrefersReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [blurPortalEl, setBlurPortalEl] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setBlurPortalEl(document.body);
+  }, []);
 
   const brickProducts = brickProductsFrom(catalog);
   const nonBricks = catalog.filter((p) => !isBrickProduct(p));
@@ -346,17 +352,22 @@ export default function AppleHome({ products: catalog }: { products: Product[] }
         <BricksSection brickProducts={brickProducts} />
         <TileGrid items={tileProducts} onImageLoad={reducedMotion ? undefined : scheduleRefresh} />
       </div>
-      <GradualBlur
-        target="page"
-        position="bottom"
-        height="4rem"
-        strength={2}
-        divCount={5}
-        curve="bezier"
-        exponential
-        opacity={1}
-        style={{ zIndex: 40 }}
-      />
+      {blurPortalEl && !reducedMotion
+        ? createPortal(
+            <GradualBlur
+              target="page"
+              position="bottom"
+              height="4rem"
+              strength={2}
+              divCount={5}
+              curve="bezier"
+              exponential
+              opacity={1}
+              style={{ zIndex: 55 }}
+            />,
+            blurPortalEl,
+          )
+        : null}
     </>
   );
 }
