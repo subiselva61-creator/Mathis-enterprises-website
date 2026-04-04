@@ -52,7 +52,7 @@ export function ContactPageClient() {
   const { reduced, transition, child, container, cardHover } = useContactMotion();
 
   return (
-    <div className="w-full max-w-4xl">
+    <div className="w-full max-w-4xl xl:max-w-5xl">
       <motion.div
         className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-start"
         variants={container}
@@ -94,7 +94,7 @@ export function ContactPageClient() {
       </motion.div>
 
       <motion.div
-        className="mt-8 grid w-full grid-cols-1 gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2"
+        className="mt-8 grid w-full grid-cols-1 gap-4 sm:mt-10 sm:gap-5 md:grid-cols-2 xl:mt-12 xl:gap-6"
         variants={container}
         initial="hidden"
         whileInView="visible"

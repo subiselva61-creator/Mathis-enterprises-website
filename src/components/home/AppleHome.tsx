@@ -12,12 +12,7 @@ import { registerScrollTrigger, ScrollTrigger } from "@/lib/gsap/registerScrollT
 import GradualBlur from "@/components/GradualBlur";
 import ShinyText from "@/components/ShinyText";
 import MaterialsCarousel from "@/components/home/MaterialsCarousel";
-
-const pillPrimary =
-  "inline-flex min-h-11 items-center justify-center rounded-full bg-[#0071e3] px-6 text-[17px] font-normal leading-none text-white transition-[color,transform] duration-200 hover:bg-[#0077ed] active:scale-[0.98] md:text-[19px]";
-
-const pillSecondary =
-  "inline-flex min-h-11 items-center justify-center rounded-full border border-[#1d1d1f] bg-transparent px-6 text-[17px] font-normal leading-none text-[#1d1d1f] transition-[color,transform,background-color] duration-200 hover:bg-[#1d1d1f]/5 active:scale-[0.98] md:text-[19px]";
+import { storefrontPillApplePrimary, storefrontPillAppleSecondary } from "@/lib/storefront-styles";
 
 const RED_PARTITION_BRICK_SLUG = "rectangular-red-partition-wall-bricks";
 
@@ -74,10 +69,10 @@ function HeroModule({
         {taglineFromDescription(product.description)}
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-        <Link href={`/shop/${product.slug}`} className={pillSecondary}>
+        <Link href={`/shop/${product.slug}`} className={storefrontPillAppleSecondary}>
           View product
         </Link>
-        <Link href={`/shop/${product.slug}`} className={pillPrimary}>
+        <Link href={`/shop/${product.slug}`} className={storefrontPillApplePrimary}>
           {isRedBricksHero && !reducedMotion ? (
             <>
               <span className="md:hidden">Buy now</span>
@@ -189,7 +184,7 @@ function TileGrid({ items, onImageLoad }: { items: Product[]; onImageLoad?: () =
       data-scroll-section
       className="home-scroll-section bg-white px-4 pb-8 md:px-6 md:pb-12"
     >
-      <div className="mx-auto max-w-[980px]" data-home-reveal>
+      <div className="mx-auto max-w-[min(1120px,calc(100%-2rem))]" data-home-reveal>
         <h2 className="mb-10 text-center text-[32px] font-semibold tracking-tight text-[#1d1d1f] md:text-[40px]">
           More to explore.
         </h2>

@@ -1,11 +1,19 @@
 /* Apple store–style PDP: light stage, rounded frame, editorial type */
 
 .page {
-  max-width: 980px;
+  max-width: 1120px;
   margin-left: auto;
   margin-right: auto;
   padding: 1.25rem 1.25rem 4rem;
   background-color: #fff;
+}
+
+@media (min-width: 1280px) {
+  .page {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 5rem;
+  }
 }
 
 .article {
@@ -17,10 +25,20 @@
 
 @media (min-width: 900px) {
   .article {
-    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-columns: 1.08fr 0.92fr;
     align-items: start;
     gap: 3rem;
     padding-top: 0.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .article {
+    gap: 3.5rem;
+  }
+
+  .heroImage {
+    border-radius: 32px;
   }
 }
 
@@ -215,6 +233,7 @@
   color: #0027eb;
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: color 0.2s ease;
 }
 
 .imLink:hover {
@@ -276,7 +295,7 @@
 
 .appleHeroFigure {
   margin: 2.25rem auto 0;
-  max-width: min(100%, 980px);
+  max-width: min(100%, 1120px);
   padding: 0 0.5rem;
 }
 
@@ -299,7 +318,7 @@
 
 .articleBrickSolo {
   grid-template-columns: 1fr;
-  max-width: 980px;
+  max-width: 1120px;
   margin-left: auto;
   margin-right: auto;
   padding: 2rem 1.25rem 4rem;

@@ -143,28 +143,7 @@ a {
   scroll-margin-top: calc(var(--site-header-height) + 8px);
 }
 
-/* Route enter: applied by app/template + RouteEnterShell (all non-admin navigations) */
-/* `to` must use transform: none — translate3d(0,0,0) traps fixed overlays (e.g. page blur). */
-@keyframes route-page-enter {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 18px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.route-page-enter {
-  animation: route-page-enter 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .route-page-enter {
-    animation: none;
-  }
-}
+/* Route enter: motion in RouteEnterShell (skips /admin + prefers-reduced-motion). */
 
 /* Constrain inner pages (shop, cart, product); home uses full-bleed blocks inside. */
 .page-container {
@@ -173,6 +152,14 @@ a {
   margin-right: auto;
   padding: 1.25rem 1.25rem 4rem;
   background-color: #fff;
+}
+
+@media (min-width: 1280px) {
+  .page-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 5rem;
+  }
 }
 
 .pageTitle {
@@ -189,6 +176,17 @@ a {
   margin-bottom: 2rem;
   line-height: 1.55;
   max-width: 40rem;
+}
+
+@media (min-width: 1280px) {
+  .pageTitle {
+    margin-bottom: 0.5rem;
+  }
+
+  .pageLead {
+    font-size: 1.0625rem;
+    max-width: 42rem;
+  }
 }
 
 html,
@@ -322,42 +320,4 @@ html {
 body.app-root {
   background-color: #fff;
   color: #1d1d1f;
-}
-
-/* Temporary: public storefront hidden on desktop (≥768px); see DesktopMobileGate */
-.desktop-viewing-notice {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .storefront-mobile-only {
-    display: none !important;
-  }
-
-  .desktop-viewing-notice {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 1rem;
-    min-height: 100dvh;
-    padding: 2rem;
-    box-sizing: border-box;
-    background-color: #fff;
-    color: #1d1d1f;
-  }
-
-  .desktop-viewing-notice__title {
-    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-
-  .desktop-viewing-notice__text {
-    font-size: 1rem;
-    line-height: 1.5;
-    max-width: 28rem;
-    color: #424245;
-  }
 }

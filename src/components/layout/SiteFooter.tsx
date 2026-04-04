@@ -43,27 +43,25 @@ const columns: { title: string; links: { href: string; label: string; external?:
 ];
 
 export default function SiteFooter() {
+  const linkClass =
+    "text-[#6e6e73] transition-colors duration-200 hover:text-[#424245] hover:underline underline-offset-2";
+
   return (
     <footer className="bg-[#f5f5f7] text-[12px] text-[#6e6e73]">
-      <div className="mx-auto max-w-[980px] px-4 pb-6 pt-10">
-        <div className="grid grid-cols-2 gap-8 border-b border-[#d2d2d7] pb-6 md:grid-cols-4">
+      <div className="mx-auto max-w-[1120px] px-4 pb-6 pt-10 xl:px-8 xl:pb-8 xl:pt-12">
+        <div className="grid grid-cols-2 gap-8 border-b border-[#d2d2d7] pb-6 md:grid-cols-4 xl:gap-10">
           {columns.map((col) => (
             <div key={col.title} data-scroll-footer-col>
-              <h3 className="mb-3 font-semibold text-[#1d1d1f]">{col.title}</h3>
-              <ul className="space-y-2">
+              <h3 className="mb-3 text-[13px] font-semibold text-[#1d1d1f] xl:text-sm">{col.title}</h3>
+              <ul className="space-y-2.5">
                 {col.links.map((l) => (
                   <li key={`${col.title}-${l.label}`}>
                     {l.external ? (
-                      <a
-                        href={l.href}
-                        className="hover:underline hover:text-[#424245]"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
+                      <a href={l.href} className={linkClass} target="_blank" rel="noopener noreferrer">
                         {l.label}
                       </a>
                     ) : (
-                      <Link href={l.href} className="hover:underline hover:text-[#424245]">
+                      <Link href={l.href} className={linkClass}>
                         {l.label}
                       </Link>
                     )}
@@ -112,14 +110,14 @@ export default function SiteFooter() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-[#d2d2d7] pt-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-3 border-t border-[#d2d2d7] pt-4 md:flex-row md:items-center md:justify-between xl:pt-5">
           <p className="text-[#86868b]">
             Copyright © {new Date().getFullYear()} Mathi Enterprises. All rights reserved.
           </p>
           <ul className="flex flex-wrap gap-x-4 gap-y-1">
             {["Privacy Policy", "Terms of Use", "Legal", "Site Map"].map((label) => (
               <li key={label}>
-                <Link href="/" className="hover:underline">
+                <Link href="/" className={linkClass}>
                   {label}
                 </Link>
               </li>

@@ -66,9 +66,11 @@ export async function sendOrderEmails(payload: OrderEmailPayload): Promise<SendO
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const from = process.env.ORDERS_FROM_EMAIL?.trim();
   if (!apiKey || !from) {
-    notes.push(
-      "Emails were not sent: add RESEND_API_KEY and ORDERS_FROM_EMAIL to .env.local, then restart the dev server.",
-    );
+    const hint =
+      process.env.NODE_ENV === "development"
+        ? "add RESEND_API_KEY and ORDERS_FROM_EMAIL to .env.local, then restart the dev server"
+        : "add RESEND_API_KEY and ORDERS_FROM_EMAIL in your host’s environment variables (e.g. Vercel → Settings → Environment Variables), then redeploy";
+    notes.push(`Emails were not sent: ${hint}.`);
     console.warn("[orders]", notes[0]);
     return { notes };
   }

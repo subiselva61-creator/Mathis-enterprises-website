@@ -38,7 +38,7 @@ export default async function LoginPage({ searchParams }: Props) {
         aria-hidden
       />
 
-      <div className="relative z-[1] w-full max-w-[440px]">
+      <div className="relative z-[1] w-full max-w-[440px] lg:max-w-[480px] xl:max-w-[520px]">
         <AuthCard
           initialMode={initialMode}
           urlError={sp.error}

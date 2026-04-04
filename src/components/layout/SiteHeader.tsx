@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Search, ShoppingBag, User, X } from "lucide-react";
 import { gsap } from "gsap";
@@ -12,6 +12,23 @@ import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 import { cn } from "@/lib/utils";
 
 const BRAND_NAME = "Mathi Enterprises";
+
+function isDesktopNavActive(pathname: string, href: string): boolean {
+  if (href.startsWith("http")) return false;
+  if (href === "/") return pathname === "/";
+  if (href === "/shop") return pathname === "/shop" || pathname.startsWith("/shop/");
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function desktopNavLinkClass(active: boolean) {
+  return cn(
+    "whitespace-nowrap text-[12px] tracking-tight text-[#1d1d1f] transition-[opacity,transform] duration-200 ease-out",
+    "relative inline-block pb-0.5 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[2px] after:rounded-full after:bg-[#0071e3] after:transition-transform after:duration-300 after:ease-out after:content-['']",
+    active
+      ? "font-semibold opacity-100 after:scale-x-100"
+      : "font-normal opacity-90 after:origin-left after:scale-x-0 hover:opacity-100 hover:after:scale-x-100",
+  );
+}
 
 const centerNav: { href: string; label: string; external?: boolean }[] = [
   { href: "/shop", label: "Catalog" },
@@ -393,6 +410,7 @@ function AppleStyleSearchOverlay({
 }
 
 export default function SiteHeader() {
+  const pathname = usePathname();
   const { itemCount, isReady } = useCart();
   const { user } = useSupabaseUser();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -502,7 +520,7 @@ export default function SiteHeader() {
           "fixed left-0 right-0 top-0 z-[100] hidden h-11 border-b border-black/[0.08] bg-[rgba(251,251,253,0.82)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,251,253,0.72)] lg:flex md:h-12"
         )}
       >
-        <div className="relative mx-auto flex h-full w-full max-w-[1024px] items-center justify-between px-4 lg:px-6">
+        <div className="relative mx-auto flex h-full w-full max-w-[1120px] items-center justify-between px-4 lg:px-6 xl:px-8">
           <Link
             href="/"
             className="relative z-[110] flex min-w-0 max-w-[min(100%,20rem)] shrink-0 items-center gap-2 opacity-90 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0071e3]"
@@ -528,7 +546,7 @@ export default function SiteHeader() {
                   {external ? (
                     <a
                       href={href}
-                      className="whitespace-nowrap text-[12px] font-normal tracking-tight text-[#1d1d1f] opacity-90 transition hover:opacity-100"
+                      className="whitespace-nowrap text-[12px] font-normal tracking-tight text-[#1d1d1f] opacity-90 transition-opacity duration-200 hover:opacity-100"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -537,7 +555,8 @@ export default function SiteHeader() {
                   ) : (
                     <Link
                       href={href}
-                      className="whitespace-nowrap text-[12px] font-normal tracking-tight text-[#1d1d1f] opacity-90 transition hover:opacity-100"
+                      className={desktopNavLinkClass(isDesktopNavActive(pathname, href))}
+                      aria-current={isDesktopNavActive(pathname, href) ? "page" : undefined}
                     >
                       {label}
                     </Link>

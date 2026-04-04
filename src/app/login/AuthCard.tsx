@@ -198,9 +198,15 @@ export default function AuthCard({
     urlError === "config" ? (
       <p className="rounded-xl border border-amber-200/80 bg-amber-50/90 px-4 py-3 text-sm leading-relaxed text-amber-950">
         Supabase is not configured. Add{" "}
-        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>{" "}
-        to {ENV_SETUP_HINT}.
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_URL</code> and a{" "}
+        <strong>publishable</strong> key:{" "}
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> (anon JWT or{" "}
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">sb_publishable_…</code>) or{" "}
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>. Do not put{" "}
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">sb_secret_…</code> in{" "}
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">NEXT_PUBLIC_*</code> — use{" "}
+        <code className="rounded-md bg-amber-100/90 px-1.5 py-0.5 text-[13px]">SUPABASE_SERVICE_ROLE_KEY</code> for that.{" "}
+        {ENV_SETUP_HINT}
       </p>
     ) : null;
 
@@ -359,7 +365,7 @@ export default function AuthCard({
   const fadeExit = reduceMotion ? { opacity: 1 } : { opacity: 0 };
 
   return (
-    <div className="w-full rounded-[2rem] border border-slate-200/70 bg-white p-8 shadow-[0_28px_64px_-18px_rgba(15,23,42,0.14)] sm:p-10">
+    <div className="w-full rounded-[2rem] border border-slate-200/70 bg-white p-8 shadow-[0_28px_64px_-18px_rgba(15,23,42,0.14)] transition-shadow duration-300 sm:p-10 lg:p-11 xl:p-12 xl:shadow-[0_32px_72px_-20px_rgba(15,23,42,0.16)]">
       <header className="mb-8 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Mathi Enterprises</p>
         <AnimatePresence mode="wait">

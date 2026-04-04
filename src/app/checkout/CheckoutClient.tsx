@@ -9,6 +9,8 @@ import Stepper, { Step } from "@/components/Stepper";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 import { placeOrder } from "./actions";
 import { formatPrice, formatProductPrice } from "@/lib/format";
+import { storefrontPillBrandCompact } from "@/lib/storefront-styles";
+import { cn } from "@/lib/utils";
 
 type Props = { products: Product[] };
 
@@ -148,10 +150,7 @@ export default function CheckoutClient({ products }: Props) {
             </ul>
           </div>
         ) : null}
-        <Link
-          href="/shop"
-          className="mt-8 inline-flex min-h-[2.75rem] items-center justify-center rounded-full bg-[#0027eb] px-6 text-sm font-medium text-white hover:bg-[#1e46f4]"
-        >
+        <Link href="/shop" className={cn(storefrontPillBrandCompact, "mt-8")}>
           Continue shopping
         </Link>
       </div>
@@ -163,6 +162,7 @@ export default function CheckoutClient({ products }: Props) {
   const label = "text-sm font-medium text-neutral-800";
 
   return (
+    <div className="mx-auto w-full max-w-2xl xl:max-w-3xl">
     <Stepper
       initialStep={1}
       disableStepIndicators
@@ -172,7 +172,7 @@ export default function CheckoutClient({ products }: Props) {
       isNextDisabled={(s) =>
         placing || (s === 1 && !step1Ok) || (s === 2 && !step2Ok) || (s === 3 && !codAccepted)
       }
-      className="items-stretch justify-start md:py-10"
+      className="items-stretch justify-start md:py-10 lg:py-12"
       stepCircleContainerClassName="border-b border-neutral-100"
     >
       <Step>
@@ -347,5 +347,6 @@ export default function CheckoutClient({ products }: Props) {
         </label>
       </Step>
     </Stepper>
+    </div>
   );
 }

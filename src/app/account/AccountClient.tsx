@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { LogOut, Package, UserRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
+import { storefrontPillBrand } from "@/lib/storefront-styles";
 import { cn } from "@/lib/utils";
 
 function getSupabase() {
@@ -58,10 +59,7 @@ export default function AccountClient() {
           <p className="mt-4 text-sm leading-relaxed text-slate-600">
             You are not signed in. Use your email or Google to continue.
           </p>
-          <Link
-            href="/login?next=/account"
-            className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 py-3.5 text-center text-base font-semibold text-white transition hover:bg-slate-800"
-          >
+          <Link href="/login?next=/account" className={cn(storefrontPillBrand, "mt-6 w-full justify-center text-center")}>
             Sign in or create account
           </Link>
         </div>

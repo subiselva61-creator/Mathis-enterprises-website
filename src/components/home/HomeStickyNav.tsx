@@ -74,7 +74,7 @@ export default function HomeStickyNav({ items }: HomeStickyNavProps) {
       className="home-sticky-nav sticky z-[90] border-b border-black/[0.06] bg-[rgba(251,251,253,0.92)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,251,253,0.82)]"
       aria-label="On this page"
     >
-      <div className="home-sticky-nav-scroll flex items-stretch gap-1 overflow-x-auto px-3 py-2 md:justify-center md:gap-0 md:px-4">
+      <div className="home-sticky-nav-scroll flex items-stretch gap-1 overflow-x-auto px-3 py-2 md:justify-center md:gap-0 md:px-4 lg:mx-auto lg:max-w-[1120px] lg:px-6 xl:px-8">
         {items.map(({ id, label }) => {
           const isActive = activeId === id;
           return (

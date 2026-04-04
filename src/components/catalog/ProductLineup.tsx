@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
 import { formatProductPrice } from "@/lib/format";
+import { storefrontPillBrand } from "@/lib/storefront-styles";
+import { cn } from "@/lib/utils";
 
 function taglineFromDescription(description: string, max = 90) {
   const t = description.trim();
@@ -14,9 +16,6 @@ function priceLine(product: Product) {
   if (product.priceOnRequest || !product.priceBasis) return base;
   return `${base} / ${product.priceBasis.toLowerCase()}`;
 }
-
-const pillCta =
-  "inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#0027eb] px-6 text-[17px] font-normal leading-none text-white transition-[color,transform] duration-200 hover:bg-[#1e46f4] active:scale-[0.98] md:text-[19px]";
 
 type Props = {
   products: Product[];
@@ -36,9 +35,13 @@ export default function ProductLineup({ products, headingId, scrollListAriaLabel
         Explore the line up
       </h2>
 
-      <div className="-mx-5 mt-8 md:mx-0">
+      <div className="-mx-5 mt-8 md:mx-0 lg:mx-0">
         <ul
-          className="flex w-full max-w-full list-none snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth pb-2 pl-0 pr-[12%] [-ms-overflow-style:none] [scrollbar-width:none] md:pb-4 [&::-webkit-scrollbar]:hidden"
+          className={cn(
+            "mt-0 w-full max-w-full list-none pl-0",
+            "flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth pb-2 pr-[12%] [-ms-overflow-style:none] [scrollbar-width:none] md:pb-4 [&::-webkit-scrollbar]:hidden",
+            "lg:grid lg:snap-none lg:grid-cols-2 lg:gap-x-10 lg:gap-y-14 lg:overflow-visible lg:pb-0 lg:pr-0 xl:grid-cols-3 xl:gap-x-12",
+          )}
           aria-label={scrollListAriaLabel}
         >
           {products.map((product) => {
@@ -50,12 +53,15 @@ export default function ProductLineup({ products, headingId, scrollListAriaLabel
             return (
               <li
                 key={product.id}
-                className="w-[88%] min-w-[88%] shrink-0 snap-start snap-always box-border px-5 md:px-0"
+                className="box-border w-[88%] min-w-[88%] shrink-0 snap-start snap-always px-5 md:px-0 lg:w-auto lg:min-w-0 lg:snap-none lg:px-0"
               >
-                <article className="flex flex-col" data-scroll-card>
+                <article
+                  className="flex flex-col transition-[transform] duration-300 lg:hover:-translate-y-0.5"
+                  data-scroll-card
+                >
                   <Link
                     href={href}
-                    className="relative isolate block aspect-square w-full max-w-full overflow-hidden rounded-[2rem] bg-[#f5f5f7] transition-opacity hover:opacity-95"
+                    className="relative isolate block aspect-square w-full max-w-full overflow-hidden rounded-[2rem] bg-[#f5f5f7] transition-[opacity,transform,box-shadow] duration-300 hover:opacity-95 lg:hover:shadow-lg lg:hover:shadow-black/[0.06]"
                   >
                     {img ? (
                       <div className="absolute inset-0 p-3 sm:p-4">
@@ -64,7 +70,7 @@ export default function ProductLineup({ products, headingId, scrollListAriaLabel
                           alt={`${product.name} — product photo`}
                           fill
                           className="object-contain object-center"
-                          sizes="(max-width: 768px) 88vw, min(1120px, 90vw)"
+                          sizes="(max-width: 1023px) 88vw, (max-width: 1279px) 42vw, 28vw"
                         />
                       </div>
                     ) : null}
@@ -86,7 +92,7 @@ export default function ProductLineup({ products, headingId, scrollListAriaLabel
                     </p>
 
                     <div className="mt-5">
-                      <Link href={href} className={pillCta}>
+                      <Link href={href} className={storefrontPillBrand}>
                         Buy now
                       </Link>
                     </div>

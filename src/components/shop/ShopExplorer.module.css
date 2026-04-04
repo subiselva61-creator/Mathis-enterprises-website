@@ -48,8 +48,9 @@
 
 .input:focus-visible,
 .select:focus-visible {
-  outline: 2px solid #171717;
+  outline: 2px solid #0027eb;
   outline-offset: 2px;
+  border-color: #c7d2fe;
 }
 
 .count {
@@ -73,6 +74,21 @@
 @media (min-width: 1024px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .wrap {
+    gap: 1.5rem;
+  }
+
+  .toolbar {
+    gap: 1.25rem;
+  }
+
+  .grid {
+    gap: 1.75rem;
   }
 }
 

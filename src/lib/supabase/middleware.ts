@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getSupabasePublishableKey, getSupabaseUrl } from "./public-env";
 
 function parseAdminEmails(): string[] {
   const raw = process.env.ADMIN_EMAILS ?? "";
@@ -14,8 +15,8 @@ function isAdminPath(pathname: string) {
 }
 
 export async function updateSession(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = getSupabaseUrl();
+  const anon = getSupabasePublishableKey();
 
   if (!url || !anon) {
     if (isAdminPath(request.nextUrl.pathname)) {

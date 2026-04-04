@@ -4,10 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Product } from "@/data/products";
+import { storefrontPillApplePrimary } from "@/lib/storefront-styles";
 import { cn } from "@/lib/utils";
-
-const pillPrimary =
-  "inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[#0071e3] px-6 text-[17px] font-normal leading-none text-white transition-[color,transform] duration-200 hover:bg-[#0077ed] active:scale-[0.98]";
 
 const AUTOPLAY_MS = 6000;
 
@@ -232,7 +230,7 @@ export default function MaterialsCarousel({
                     {taglineFromDescription(product.description)}
                   </p>
                   <div className="mt-4">
-                    <Link href={`/shop/${product.slug}`} className={pillPrimary}>
+                    <Link href={`/shop/${product.slug}`} className={storefrontPillApplePrimary}>
                       Buy now
                     </Link>
                   </div>

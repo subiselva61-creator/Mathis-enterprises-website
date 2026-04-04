@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { getSupabasePublishableKey, getSupabaseUrl } from "@/lib/supabase/public-env";
 
 /** Prefer proxy headers so redirects use the public host (e.g. Vercel). */
 function getRequestOrigin(request: NextRequest): string {
@@ -34,8 +35,8 @@ function loginOauthFailRedirect(origin: string, detail?: string | null) {
 }
 
 export async function GET(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = getSupabaseUrl();
+  const anon = getSupabasePublishableKey();
   const { searchParams } = request.nextUrl;
   const code = searchParams.get("code");
   const next = safeNextPath(searchParams.get("next"));

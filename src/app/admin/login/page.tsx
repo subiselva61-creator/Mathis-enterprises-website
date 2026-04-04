@@ -16,9 +16,11 @@ export default async function AdminLoginPage({ searchParams }: Props) {
       {err === "config" ? (
         <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
           Supabase environment variables are missing. Set{" "}
-          <code className="rounded bg-amber-100 px-1">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-          <code className="rounded bg-amber-100 px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in{" "}
-          <code className="rounded bg-amber-100 px-1">.env.local</code>.
+          <code className="rounded bg-amber-100 px-1">NEXT_PUBLIC_SUPABASE_URL</code> and a publishable/anon key (
+          <code className="rounded bg-amber-100 px-1">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> or{" "}
+          <code className="rounded bg-amber-100 px-1">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code>) — not{" "}
+          <code className="rounded bg-amber-100 px-1">sb_secret_…</code> — in{" "}
+          <code className="rounded bg-amber-100 px-1">.env.local</code> or your host.
         </p>
       ) : null}
       {err === "forbidden" ? (
