@@ -167,28 +167,34 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     const tl = gsap.timeline({ paused: true });
 
+    const layerDur = reduceMotion ? 0.04 : 0.07;
+    const layerStagger = reduceMotion ? 0 : 0.012;
+
     layerStates.forEach((ls, i) => {
-      tl.fromTo(ls.el, { xPercent: ls.start }, { xPercent: 0, duration: 0.5, ease: 'power4.out' }, i * 0.07);
+      tl.fromTo(
+        ls.el,
+        { xPercent: ls.start },
+        { xPercent: 0, duration: layerDur, ease: "power2.out" },
+        i * layerStagger
+      );
     });
 
-    const lastTime = layerStates.length ? (layerStates.length - 1) * 0.07 : 0;
-    const panelInsertTime = lastTime + (layerStates.length ? 0.08 : 0);
-    const panelDuration = 0.65;
+    const lastTime = layerStates.length ? (layerStates.length - 1) * layerStagger : 0;
+    const panelInsertTime = lastTime + (layerStates.length ? 0.01 : 0);
+    const panelDuration = reduceMotion ? 0.04 : 0.09;
 
     tl.fromTo(
       panel,
       { xPercent: panelStart },
-      { xPercent: 0, duration: panelDuration, ease: 'power4.out' },
+      { xPercent: 0, duration: panelDuration, ease: "power2.out" },
       panelInsertTime
     );
 
     if (itemEls.length) {
-      const itemsStartRatio = 0.15;
+      const itemsStartRatio = 0.08;
       const itemsStart = panelInsertTime + panelDuration * itemsStartRatio;
-      const itemDuration = reduceMotion ? 0.05 : 0.52;
-      const staggerEach = reduceMotion
-        ? 0
-        : Math.min(0.07, 0.42 / Math.max(1, itemEls.length));
+      const itemDuration = reduceMotion ? 0.03 : 0.09;
+      const staggerEach = reduceMotion ? 0 : Math.min(0.012, 0.06 / Math.max(1, itemEls.length));
 
       tl.to(
         itemEls,
@@ -196,7 +202,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           yPercent: 0,
           rotate: 0,
           duration: itemDuration,
-          ease: reduceMotion ? "none" : "power3.out",
+          ease: reduceMotion ? "none" : "power2.out",
           stagger: { each: staggerEach, from: "start" },
           onComplete: () => {
             if (!reduceMotion) gsap.set(itemEls, { clearProps: "willChange" });
@@ -209,23 +215,23 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         tl.to(
           numberEls,
           {
-            duration: reduceMotion ? 0.05 : 0.38,
+            duration: reduceMotion ? 0.03 : 0.07,
             ease: reduceMotion ? "none" : "power2.out",
             ...smNumOpacityVars(1),
-            stagger: { each: reduceMotion ? 0 : 0.05, from: "start" },
+            stagger: { each: reduceMotion ? 0 : 0.01, from: "start" },
           },
-          itemsStart + (reduceMotion ? 0 : 0.06)
+          itemsStart + (reduceMotion ? 0 : 0.02)
         );
       }
     }
 
     if (socialTitle || socialLinks.length) {
-      const socialsStart = panelInsertTime + panelDuration * 0.4;
+      const socialsStart = panelInsertTime + panelDuration * 0.12;
 
       if (socialTitle)
         tl.to(
           socialTitle,
-          { opacity: 1, duration: reduceMotion ? 0.05 : 0.35, ease: reduceMotion ? "none" : "power2.out" },
+          { opacity: 1, duration: reduceMotion ? 0.03 : 0.07, ease: reduceMotion ? "none" : "power2.out" },
           socialsStart
         );
       if (socialLinks.length) {
@@ -234,14 +240,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           {
             y: 0,
             opacity: 1,
-            duration: reduceMotion ? 0.05 : 0.4,
-            ease: reduceMotion ? "none" : "power3.out",
-            stagger: { each: reduceMotion ? 0 : 0.05, from: "start" },
+            duration: reduceMotion ? 0.03 : 0.08,
+            ease: reduceMotion ? "none" : "power2.out",
+            stagger: { each: reduceMotion ? 0 : 0.01, from: "start" },
             onComplete: () => {
               gsap.set(socialLinks, { clearProps: "opacity" });
             },
           },
-          socialsStart + (reduceMotion ? 0 : 0.04)
+          socialsStart + (reduceMotion ? 0 : 0.01)
         );
       }
     }
@@ -280,8 +286,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     closeTweenRef.current = gsap.to(all, {
       xPercent: offscreen,
-      duration: 0.32,
-      ease: 'power3.in',
+      duration: 0.09,
+      ease: "power2.in",
       overwrite: 'auto',
       onComplete: () => {
         const itemEls = Array.from(panel.querySelectorAll('.sm-panel-itemLabel')) as HTMLElement[];
@@ -314,14 +320,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       // ensure container never rotates
       gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%' });
       spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: 'power4.out' } })
-        .to(h, { rotate: 45, duration: 0.5 }, 0)
-        .to(v, { rotate: -45, duration: 0.5 }, 0);
+        .timeline({ defaults: { ease: "power2.out" } })
+        .to(h, { rotate: 45, duration: 0.1 }, 0)
+        .to(v, { rotate: -45, duration: 0.1 }, 0);
     } else {
       spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: 'power3.inOut' } })
-        .to(h, { rotate: 0, duration: 0.35 }, 0)
-        .to(v, { rotate: 90, duration: 0.35 }, 0)
+        .timeline({ defaults: { ease: "power2.inOut" } })
+        .to(h, { rotate: 0, duration: 0.08 }, 0)
+        .to(v, { rotate: 90, duration: 0.08 }, 0)
         .to(icon, { rotate: 0, duration: 0.001 }, 0);
     }
   }, []);
@@ -333,7 +339,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       colorTweenRef.current?.kill();
       if (changeMenuColorOnOpen) {
         const targetColor = opening ? openMenuButtonColor : menuButtonColor;
-        colorTweenRef.current = gsap.to(btn, { color: targetColor, delay: 0.18, duration: 0.3, ease: 'power2.out' });
+        colorTweenRef.current = gsap.to(btn, { color: targetColor, delay: 0, duration: 0.06, ease: "power2.out" });
       } else {
         gsap.set(btn, { color: menuButtonColor });
       }
@@ -358,30 +364,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     textCycleAnimRef.current?.kill();
 
-    const currentLabel = opening ? 'Menu' : 'Close';
-    const targetLabel = opening ? 'Close' : 'Menu';
-    const cycles = 3;
-
-    const seq: string[] = [currentLabel];
-    let last = currentLabel;
-    for (let i = 0; i < cycles; i++) {
-      last = last === 'Menu' ? 'Close' : 'Menu';
-      seq.push(last);
-    }
-    if (last !== targetLabel) seq.push(targetLabel);
-    seq.push(targetLabel);
-
-    setTextLines(seq);
+    const targetLabel = opening ? "Close" : "Menu";
+    setTextLines([targetLabel]);
     gsap.set(inner, { yPercent: 0 });
-
-    const lineCount = seq.length;
-    const finalShift = ((lineCount - 1) / lineCount) * 100;
-
-    textCycleAnimRef.current = gsap.to(inner, {
-      yPercent: -finalShift,
-      duration: 0.5 + lineCount * 0.07,
-      ease: 'power4.out'
-    });
   }, []);
 
   const toggleMenu = useCallback(() => {
@@ -565,7 +550,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             {/* Two full-width layers (avoids 200% flex column rounding / clipping with overflow-x on body) */}
             <div className="relative min-h-0 flex-1 overflow-hidden">
               <div
-                className={`sm-panel-layer-root absolute inset-0 flex flex-col overflow-y-auto transition-transform duration-200 ease-out motion-reduce:transition-none ${
+                className={`sm-panel-layer-root absolute inset-0 flex flex-col overflow-y-auto transition-transform duration-75 ease-out motion-reduce:transition-none ${
                   drilledIndex === null ? "translate-x-0" : "-translate-x-full"
                 }`}
               >
@@ -674,7 +659,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               </div>
 
               <div
-                className={`sm-panel-layer-drill absolute inset-0 flex flex-col overflow-y-auto pl-0 transition-transform duration-200 ease-out motion-reduce:transition-none ${
+                className={`sm-panel-layer-drill absolute inset-0 flex flex-col overflow-y-auto pl-0 transition-transform duration-75 ease-out motion-reduce:transition-none ${
                   drilledIndex === null ? "translate-x-full pointer-events-none" : "translate-x-0"
                 }`}
                 aria-hidden={drilledIndex === null}

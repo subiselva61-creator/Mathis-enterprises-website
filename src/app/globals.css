@@ -169,7 +169,23 @@ a {
 
 html,
 body.app-root {
-  color-scheme: light only;
+  color-scheme: only light;
+}
+
+/*
+ * OS dark mode: some engines still auto-darken the page even with meta color-scheme="only light".
+ * This block re-asserts the authored light canvas (Chrome/Samsung-style auto-dark workarounds).
+ */
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: only light;
+    background-color: #ffffff !important;
+  }
+
+  body.app-root {
+    background-color: #ffffff !important;
+    color: #1d1d1f !important;
+  }
 }
 
 @layer base {

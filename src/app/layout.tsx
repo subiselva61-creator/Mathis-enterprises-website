@@ -7,6 +7,7 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SiteScrollExperience from "@/components/motion/SiteScrollExperience";
 import DesktopMobileGate from "@/components/layout/DesktopMobileGate";
+import ForceLightDocument from "@/components/layout/ForceLightDocument";
 
 /** Merged catalog reads Supabase; must not freeze at build time. */
 export const dynamic = "force-dynamic";
@@ -45,8 +46,9 @@ export default async function RootLayout({
 }>) {
   const products = await getMergedProducts();
   return (
-    <html lang="en" className={dmSans.variable}>
+    <html lang="en" className={dmSans.variable} style={{ colorScheme: "only light" }}>
       <body className="app-root">
+        <ForceLightDocument />
         <DesktopMobileGate>
           <a href="#main-content" className="skip-link">
             Skip to content

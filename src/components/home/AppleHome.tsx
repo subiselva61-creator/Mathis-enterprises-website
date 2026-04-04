@@ -10,60 +10,43 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { registerScrollTrigger, ScrollTrigger } from "@/lib/gsap/registerScrollTrigger";
 import GradualBlur from "@/components/GradualBlur";
 import ShinyText from "@/components/ShinyText";
+import MaterialsCarousel from "@/components/home/MaterialsCarousel";
 
 const pillPrimary =
-  "inline-flex min-h-11 items-center justify-center rounded-full bg-[#0027eb] px-6 text-[17px] font-normal leading-none text-white transition-[color,transform] duration-200 hover:bg-[#1e46f4] active:scale-[0.98] md:text-[19px]";
+  "inline-flex min-h-11 items-center justify-center rounded-full bg-[#0071e3] px-6 text-[17px] font-normal leading-none text-white transition-[color,transform] duration-200 hover:bg-[#0077ed] active:scale-[0.98] md:text-[19px]";
 
-const BROWN_A1_M_SAND_SLUG = "brown-a1-grade-m-sand";
+const pillSecondary =
+  "inline-flex min-h-11 items-center justify-center rounded-full border border-[#1d1d1f] bg-transparent px-6 text-[17px] font-normal leading-none text-[#1d1d1f] transition-[color,transform,background-color] duration-200 hover:bg-[#1d1d1f]/5 active:scale-[0.98] md:text-[19px]";
 
-function taglineFromDescription(description: string, max = 90) {
+const RED_PARTITION_BRICK_SLUG = "rectangular-red-partition-wall-bricks";
+
+function taglineFromDescription(description: string, max = 120) {
   const t = description.trim();
   if (t.length <= max) return t;
   return `${t.slice(0, max).trim()}…`;
 }
 
-function sectionIdForHero(product: Product, index: number) {
-  return index === 0 ? "home-hero" : `home-${product.slug}`;
-}
-
 function HeroModule({
   product,
-  index,
   onImageLoad,
   reducedMotion,
 }: {
   product: Product;
-  index: number;
   onImageLoad?: () => void;
   reducedMotion?: boolean;
 }) {
   const img = product.images[0];
-  const isRedBricksHero = product.slug === "rectangular-red-partition-wall-bricks";
-  const isRiverSandHero = product.slug === "a-grade-brown-river-sand";
-  const isBrownA1MSandHero = product.slug === BROWN_A1_M_SAND_SLUG;
-  const isFirstHero = index === 0;
-  const sectionId = sectionIdForHero(product, index);
+  const isRedBricksHero = product.slug === RED_PARTITION_BRICK_SLUG;
 
   const textBlock = (
-    <div
-      className={
-        isRedBricksHero
-          ? "relative z-10 mx-auto w-full max-w-[980px] px-4 pt-10 pb-3 text-center min-h-0 md:min-h-[345px] md:w-[343px] md:px-4 md:pt-[87px] md:pb-8 md:-ml-[18px] md:mr-[45px]"
-          : isRiverSandHero
-            ? "mx-auto max-w-[980px] -mt-[5px] -mb-[5px] -ml-[6px] -mr-[6px] px-4 pt-10 text-center pb-[15px] md:pb-8 md:pt-14 min-h-[332px]"
-            : isBrownA1MSandHero
-              ? "mx-auto max-w-[980px] px-4 pt-8 text-center pb-2 md:px-6 md:pb-5 md:pt-12"
-              : "mx-auto max-w-[980px] -mt-[5px] -mb-[5px] -ml-[6px] -mr-[6px] px-4 pt-10 text-center pb-[15px] md:pb-8 md:pt-14"
-      }
-    >
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-current opacity-80 md:text-sm md:font-medium md:normal-case md:tracking-normal">
+    <div className="relative z-10 mx-auto w-full max-w-[980px] px-4 pb-4 pt-12 text-center min-h-0 md:min-h-[345px] md:w-[343px] md:px-4 md:pt-[87px] md:pb-8 md:-ml-[18px] md:mr-[45px]">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#6e6e73] md:text-sm md:font-medium md:normal-case md:tracking-normal">
         {product.category}
       </p>
       <h2
         id={`hero-${product.slug}`}
-        className="mb-2 text-[32px] font-semibold leading-[1.05] tracking-tight md:text-[56px] lg:text-[64px]"
+        className="mb-3 text-[34px] font-semibold leading-[1.05] tracking-tight text-[#1d1d1f] md:mb-4 md:text-[56px] lg:text-[64px]"
       >
-        {/* Gradient text uses background-clip; plain text on small screens avoids low-contrast / invisible text in some mobile engines. */}
         {isRedBricksHero && !reducedMotion ? (
           <>
             <span className="md:hidden">{product.name}</span>
@@ -86,16 +69,13 @@ function HeroModule({
           product.name
         )}
       </h2>
-      <p
-        className={
-          isBrownA1MSandHero
-            ? "mx-auto mb-3 max-w-xl text-[17px] leading-snug text-current opacity-90 md:mb-4 md:text-[21px] md:leading-[1.381]"
-            : "mx-auto mb-6 max-w-xl text-[17px] leading-snug text-current opacity-90 md:text-[21px] md:leading-[1.381]"
-        }
-      >
-        {taglineFromDescription(product.description, 120)}
+      <p className="mx-auto mb-8 max-w-xl text-[17px] leading-relaxed text-[#424245] md:mb-10 md:text-[21px] md:leading-[1.381]">
+        {taglineFromDescription(product.description)}
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+        <Link href={`/shop/${product.slug}`} className={pillSecondary}>
+          View product
+        </Link>
         <Link href={`/shop/${product.slug}`} className={pillPrimary}>
           {isRedBricksHero && !reducedMotion ? (
             <>
@@ -106,8 +86,8 @@ function HeroModule({
                   speed={2.5}
                   once
                   delay={0}
-                  color="#dbe4ff"
-                  shineColor="#ffffff"
+                  color="#ffffff"
+                  shineColor="#e8f0ff"
                   spread={120}
                   direction="left"
                   pauseOnHover={false}
@@ -124,78 +104,39 @@ function HeroModule({
   );
 
   const imageBlock = (
-    <div
-      className={
-        isRedBricksHero
-          ? "relative z-0 mx-auto h-[min(50vh,420px)] w-full max-w-[1400px] md:h-[min(68vh,680px)]"
-          : isRiverSandHero
-            ? "relative mx-auto h-[min(56vh,480px)] w-full max-w-[1400px] md:h-[min(68vh,680px)] md:-mt-[119px] md:-mb-[119px]"
-            : isBrownA1MSandHero
-              ? "relative mx-auto h-[min(40vh,300px)] w-full max-w-[1400px] sm:h-[min(44vh,340px)] md:h-[min(52vh,480px)]"
-              : "relative mx-auto h-[min(62vh,560px)] w-full max-w-[1400px] md:h-[min(68vh,680px)]"
-      }
-    >
-      <Image
-        src={img}
-        alt={
-          isRedBricksHero
-            ? "Rectangular red partition wall brick for construction"
-            : isRiverSandHero
-              ? "A grade brown river sand for construction"
-              : isBrownA1MSandHero
-                ? "Brown A1 grade M sand pile for construction"
-                : ""
-        }
-        fill
-        className={
-          isRedBricksHero
-            ? "object-contain object-center !inset-0 !h-full !w-full -my-3 px-4 py-5 md:-my-[34px] md:object-bottom md:!inset-auto md:!left-[3px] md:!top-[-32px] md:!h-[386px] md:!w-full md:px-8 md:pb-[25px] md:pt-5"
-            : isRiverSandHero
-              ? "object-contain object-center !inset-0 !h-full !w-full -my-3 px-4 pt-[85px] pb-5 md:object-bottom md:!inset-auto md:!left-[28px] md:!top-[43px] md:!h-[430px] md:!w-[408px] md:!max-w-none md:px-8 md:pt-6 md:pb-[110px]"
-              : isBrownA1MSandHero
-                ? "object-contain object-center px-2 pb-4 pt-0 md:px-6 md:pb-6"
-                : "object-contain object-bottom -my-3 px-4 pb-6 md:px-8"
-        }
-        sizes="100vw"
-        priority={index === 0}
-        style={isBrownA1MSandHero ? { left: 3 } : undefined}
-        onLoadingComplete={onImageLoad}
-      />
+    <div className="relative z-0 mx-auto h-[min(52vh,440px)] w-full max-w-[1400px] md:h-[min(68vh,680px)]">
+      <div className="relative h-full w-full">
+        <Image
+          src={img}
+          alt={
+            isRedBricksHero
+              ? "Rectangular red partition wall brick for construction"
+              : `${product.name} for construction`
+          }
+          fill
+          className="object-contain object-center !inset-0 !h-full !w-full -my-3 px-4 py-5 md:-my-[34px] md:object-bottom md:!inset-auto md:!left-[3px] md:!top-[-32px] md:!h-[386px] md:!w-full md:px-8 md:pb-[25px] md:pt-5"
+          sizes="100vw"
+          priority
+          onLoadingComplete={onImageLoad}
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[38%] bg-gradient-to-t from-white from-25% to-transparent"
+          aria-hidden
+        />
+      </div>
     </div>
   );
 
-  if (isFirstHero) {
-    return (
-      <section
-        id={sectionId}
-        data-scroll-section
-        className="home-scroll-section bg-white px-4 pb-4 text-[#1d1d1f] md:px-6 md:pb-6"
-        aria-labelledby={`hero-${product.slug}`}
-      >
-        <div className="mx-auto max-w-[1400px]">
-          <div data-home-hero-text>{textBlock}</div>
-          <div data-home-hero-image>{imageBlock}</div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section
-      id={sectionId}
+      id="home-hero"
       data-scroll-section
-      className={
-        isRiverSandHero
-          ? "home-scroll-section my-9 min-h-[431px] px-4 pb-4 md:px-6 md:pb-6"
-          : "home-scroll-section px-4 pb-4 md:px-6 md:pb-6"
-      }
+      className="home-scroll-section bg-white px-4 pb-6 text-[#1d1d1f] md:px-6 md:pb-6"
       aria-labelledby={`hero-${product.slug}`}
     >
-      <div className="mx-auto max-w-[1400px] overflow-hidden rounded-3xl bg-[#f5f5f7] text-[#1d1d1f]">
-        <div data-home-reveal>
-          {textBlock}
-          {imageBlock}
-        </div>
+      <div className="mx-auto max-w-[1400px]">
+        <div data-home-hero-text>{textBlock}</div>
+        <div data-home-hero-image>{imageBlock}</div>
       </div>
     </section>
   );
@@ -281,8 +222,6 @@ function TileGrid({ items, onImageLoad }: { items: Product[]; onImageLoad?: () =
   );
 }
 
-const RED_PARTITION_BRICK_SLUG = "rectangular-red-partition-wall-bricks";
-
 export default function AppleHome({ products: catalog }: { products: Product[] }) {
   const reducedMotion = usePrefersReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -291,9 +230,12 @@ export default function AppleHome({ products: catalog }: { products: Product[] }
   const brickProducts = brickProductsFrom(catalog);
   const nonBricks = catalog.filter((p) => !isBrickProduct(p));
   const redPartitionHero = catalog.find((p) => p.slug === RED_PARTITION_BRICK_SLUG);
-  const heroProducts: Product[] = redPartitionHero
-    ? [redPartitionHero, ...nonBricks.slice(0, 5)]
-    : nonBricks.slice(0, 6);
+
+  const heroProduct: Product | undefined = redPartitionHero ?? nonBricks[0];
+  const carouselProducts: Product[] = redPartitionHero
+    ? nonBricks.slice(0, 5)
+    : nonBricks.slice(1, 6);
+
   const tileProducts: Product[] = nonBricks.slice(5, 9);
 
   const scheduleRefresh = useCallback(() => {
@@ -388,15 +330,19 @@ export default function AppleHome({ products: catalog }: { products: Product[] }
   return (
     <>
       <div ref={rootRef} className="bg-white">
-        {heroProducts.map((p, i) => (
+        {heroProduct ? (
           <HeroModule
-            key={p.id}
-            product={p}
-            index={i}
+            key={heroProduct.id}
+            product={heroProduct}
             onImageLoad={reducedMotion ? undefined : scheduleRefresh}
             reducedMotion={reducedMotion}
           />
-        ))}
+        ) : null}
+        <MaterialsCarousel
+          products={carouselProducts}
+          onImageLoad={reducedMotion ? undefined : scheduleRefresh}
+          reducedMotion={reducedMotion}
+        />
         <BricksSection brickProducts={brickProducts} />
         <TileGrid items={tileProducts} onImageLoad={reducedMotion ? undefined : scheduleRefresh} />
       </div>
