@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
 import { formatProductPrice } from "@/lib/format";
+import { productPhotoAlt } from "@/lib/site";
 import styles from "./ProductCard.module.css";
 
 const M20_READY_MIX_SLUG = "m-20-construction-ready-mix-concrete";
@@ -17,7 +18,7 @@ export default function ProductCard({ product }: Props) {
   const image = (
     <Image
       src={img}
-      alt={`${product.name} — product photo`}
+      alt={productPhotoAlt(product, "card")}
       fill
       className={styles.image}
       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"

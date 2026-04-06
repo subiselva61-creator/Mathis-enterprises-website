@@ -11,6 +11,7 @@ import "@/components/ui/RippleButton.css";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { registerScrollTrigger, ScrollTrigger } from "@/lib/gsap/registerScrollTrigger";
 import styles from "./CartView.module.css";
+import { productPhotoAlt } from "@/lib/site";
 
 type Props = { products: Product[] };
 
@@ -92,7 +93,7 @@ export default function CartView({ products }: Props) {
                 <div className={styles.thumb}>
                   <Image
                     src={img}
-                    alt={`${product.name} — product photo`}
+                    alt={productPhotoAlt(product, "thumb")}
                     fill
                     className={styles.thumbImg}
                     sizes="96px"

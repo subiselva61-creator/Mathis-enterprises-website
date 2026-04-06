@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import AuthCard from "./AuthCard";
+import { noindexMetadata } from "@/lib/seo-metadata";
+
+export const metadata: Metadata = noindexMetadata({
+  title: "Sign in",
+  description: "Sign in or create a Mathi Enterprises account to manage your profile and orders.",
+});
 
 type Props = {
   searchParams?: Promise<{

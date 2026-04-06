@@ -1,5 +1,8 @@
 import Link from "next/link";
+import LocalBusinessJsonLd from "@/components/seo/LocalBusinessJsonLd";
 import { categories } from "@/data/products";
+import { ADDRESS_LINES, GST_NUMBER, PHONE_DISPLAY, PHONE_TEL } from "@/app/contact/contact-constants";
+import { BUSINESS_NAME } from "@/lib/site";
 
 const IM_PROFILE = "https://www.indiamart.com/mathi-enterprises-tamilnadu/";
 
@@ -22,6 +25,7 @@ const columns: { title: string; links: { href: string; label: string; external?:
     links: [
       { href: "/", label: "Mathi Enterprises" },
       { href: "/contact", label: "Contact" },
+      { href: "/service-areas", label: "Service areas" },
       { href: IM_PROFILE, label: "IndiaMART storefront", external: true },
       { href: "/shop", label: "Request quote (via catalog)" },
     ],
@@ -48,6 +52,7 @@ export default function SiteFooter() {
 
   return (
     <footer className="bg-[#f5f5f7] text-[12px] text-[#6e6e73]">
+      <LocalBusinessJsonLd />
       <div className="mx-auto max-w-[1120px] px-4 pb-6 pt-10 xl:px-8 xl:pb-8 xl:pt-12">
         <div className="grid grid-cols-2 gap-8 border-b border-[#d2d2d7] pb-6 md:grid-cols-4 xl:gap-10">
           {columns.map((col) => (
@@ -72,6 +77,19 @@ export default function SiteFooter() {
           ))}
         </div>
 
+        <div className="mt-2 rounded-2xl border border-[#d2d2d7] bg-white/80 px-4 py-4 text-[13px] leading-relaxed text-[#424245] md:px-5 md:py-5">
+          <p className="text-[14px] font-semibold text-[#1d1d1f]">{BUSINESS_NAME}</p>
+          <p className="mt-1">
+            {ADDRESS_LINES[0]}, {ADDRESS_LINES[1]}, {ADDRESS_LINES[2]}
+          </p>
+          <p className="mt-2">
+            <a href={`tel:${PHONE_TEL}`} className="font-medium text-[#1d1d1f] underline-offset-2 hover:underline">
+              {PHONE_DISPLAY}
+            </a>
+          </p>
+          <p className="mt-1 font-mono text-[12px] text-[#6e6e73]">GST: {GST_NUMBER}</p>
+        </div>
+
         <div className="py-4">
           <p className="mb-3 leading-relaxed">
             <strong className="font-semibold text-[#424245]">Pricing:</strong> Rates and MOQs on this site are indicative,
@@ -85,7 +103,7 @@ export default function SiteFooter() {
               IndiaMART
             </a>{" "}
             listings and may change. Always confirm the latest quote, freight, and availability before placing an order.
-            GST: 33ACPPV8797A2ZX · Chennai, Tamil Nadu.
+            GST: {GST_NUMBER} · {ADDRESS_LINES[0]}, {ADDRESS_LINES[1]}.
           </p>
           <p className="mb-4 leading-relaxed">
             You can place a cash-on-delivery order from your{" "}
@@ -115,13 +133,26 @@ export default function SiteFooter() {
             Copyright © {new Date().getFullYear()} Mathi Enterprises. All rights reserved.
           </p>
           <ul className="flex flex-wrap gap-x-4 gap-y-1">
-            {["Privacy Policy", "Terms of Use", "Legal", "Site Map"].map((label) => (
-              <li key={label}>
-                <Link href="/" className={linkClass}>
-                  {label}
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link href="/" className={linkClass}>
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/" className={linkClass}>
+                Terms of Use
+              </Link>
+            </li>
+            <li>
+              <Link href="/" className={linkClass}>
+                Legal
+              </Link>
+            </li>
+            <li>
+              <Link href="/service-areas" className={linkClass}>
+                Site map
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

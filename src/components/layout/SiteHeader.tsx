@@ -568,6 +568,7 @@ export default function SiteHeader() {
         <CardNav
           logo="/logo.png"
           logoAlt={`${BRAND_NAME} logo`}
+          brandName={BRAND_NAME}
           items={cardNavItems}
           baseColor="#fff"
           menuColor="#000"

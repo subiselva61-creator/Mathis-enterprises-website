@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getMergedProducts } from "@/lib/catalog";
+import { noindexMetadata } from "@/lib/seo-metadata";
 import CheckoutClient from "./CheckoutClient";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = noindexMetadata({
   title: "Checkout",
   description: "Complete your order with cash on delivery — contact and delivery details.",
-};
+});
 
 export default async function CheckoutPage() {
   const products = await getMergedProducts();

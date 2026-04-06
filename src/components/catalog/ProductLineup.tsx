@@ -4,6 +4,7 @@ import type { Product } from "@/data/products";
 import { formatProductPrice } from "@/lib/format";
 import { storefrontPillBrand } from "@/lib/storefront-styles";
 import { cn } from "@/lib/utils";
+import { productPhotoAlt } from "@/lib/site";
 
 function taglineFromDescription(description: string, max = 90) {
   const t = description.trim();
@@ -21,19 +22,28 @@ type Props = {
   products: Product[];
   headingId: string;
   scrollListAriaLabel: string;
+  /** Use `h3` when the page already has an `h2` (e.g. category benefits block). */
+  lineupHeadingLevel?: "h2" | "h3";
 };
 
-export default function ProductLineup({ products, headingId, scrollListAriaLabel }: Props) {
+export default function ProductLineup({
+  products,
+  headingId,
+  scrollListAriaLabel,
+  lineupHeadingLevel = "h2",
+}: Props) {
   if (products.length === 0) return null;
+
+  const LineupHeadingTag = lineupHeadingLevel === "h3" ? "h3" : "h2";
 
   return (
     <section className="mt-1" aria-labelledby={headingId}>
-      <h2
+      <LineupHeadingTag
         id={headingId}
         className="text-[28px] font-semibold tracking-tight text-[#1d1d1f] md:text-[32px]"
       >
         Explore the line up
-      </h2>
+      </LineupHeadingTag>
 
       <div className="-mx-5 mt-8 md:mx-0 lg:mx-0">
         <ul
@@ -67,7 +77,7 @@ export default function ProductLineup({ products, headingId, scrollListAriaLabel
                       <div className="absolute inset-0 p-3 sm:p-4">
                         <Image
                           src={img}
-                          alt={`${product.name} — product photo`}
+                          alt={productPhotoAlt(product, "card")}
                           fill
                           className="object-contain object-center"
                           sizes="(max-width: 1023px) 88vw, (max-width: 1279px) 42vw, 28vw"

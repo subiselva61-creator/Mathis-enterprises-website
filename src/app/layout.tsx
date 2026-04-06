@@ -7,6 +7,12 @@ import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SiteScrollExperience from "@/components/motion/SiteScrollExperience";
 import ForceLightDocument from "@/components/layout/ForceLightDocument";
+import {
+  BUSINESS_NAME,
+  DEFAULT_OG_DESCRIPTION,
+  DEFAULT_OG_IMAGE_PATH,
+  siteUrl,
+} from "@/lib/site";
 
 /** Merged catalog reads Supabase; must not freeze at build time. */
 export const dynamic = "force-dynamic";
@@ -20,13 +26,39 @@ export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
+const canonical = siteUrl();
+
 export const metadata: Metadata = {
+  metadataBase: new URL(canonical),
   title: {
-    default: "Mathi Enterprises",
+    default: BUSINESS_NAME,
     template: "%s · Mathi Enterprises",
   },
   description:
-    "Mathi Enterprises — retail trader of construction materials, cement, TMT bars, aggregates, AAC blocks, and residential plots in Chennai, Tamil Nadu (GST 33ACPPV8797A2ZX). Browse our catalog; confirm quotes on IndiaMART.",
+    "Mathi Enterprises — wholesale construction materials supplier in Chennai: cement, TMT steel, bricks, sand, aggregates, and AAC blocks (GST 33ACPPV8797A2ZX). Bulk pricing and project supply chain support; confirm quotes on IndiaMART.",
+  keywords: [
+    "bulk cement Chennai",
+    "wholesale construction materials",
+    "TMT steel supplier",
+    "building materials wholesale",
+    "construction procurement Chennai",
+    "Mathi Enterprises",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: canonical,
+    siteName: BUSINESS_NAME,
+    title: `${BUSINESS_NAME} — Bulk building materials, Chennai`,
+    description: DEFAULT_OG_DESCRIPTION,
+    images: [{ url: DEFAULT_OG_IMAGE_PATH, width: 1200, height: 630, alt: BUSINESS_NAME }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${BUSINESS_NAME} — Bulk building materials, Chennai`,
+    description: DEFAULT_OG_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE_PATH],
+  },
   appleWebApp: {
     statusBarStyle: "default",
   },

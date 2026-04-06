@@ -7,6 +7,7 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
+  ADDRESS_LINES,
   GOOGLE_MAPS_EMBED_SRC,
   GOOGLE_MAPS_LINK,
   IM_URL,
@@ -141,7 +142,7 @@ export function ContactPageClient() {
           </div>
           <p className={labelClass}>Location</p>
           <p className="mt-2 text-[0.9375rem] font-medium leading-snug text-[#1d1d1f] sm:text-base">
-            Chennai, Tamil Nadu, India
+            {ADDRESS_LINES.join(", ")}
           </p>
 
           <div className="mt-4 overflow-hidden rounded-lg border border-neutral-200 bg-[#f5f5f7] shadow-inner sm:mt-5 sm:rounded-xl">

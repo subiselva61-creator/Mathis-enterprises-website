@@ -24,6 +24,7 @@ export type CardNavItem = {
 export interface CardNavProps {
   logo: string;
   logoAlt?: string;
+  brandName?: string;
   items: CardNavItem[];
   className?: string;
   ease?: string;
@@ -37,6 +38,7 @@ export interface CardNavProps {
 const CardNav: React.FC<CardNavProps> = ({
   logo,
   logoAlt = "Logo",
+  brandName,
   items,
   className = "",
   ease = "power3.out",
@@ -199,7 +201,7 @@ const CardNav: React.FC<CardNavProps> = ({
 
           <Link
             href="/"
-            className="flex items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="flex items-center gap-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             aria-label="Home"
             onClick={closeMenu}
           >
@@ -211,6 +213,14 @@ const CardNav: React.FC<CardNavProps> = ({
               className="h-[28px] w-[28px] rounded-sm object-cover"
               priority
             />
+            {brandName && (
+              <span
+                className="whitespace-nowrap text-[14px] font-semibold tracking-tight"
+                style={{ color: menuColor || "#000" }}
+              >
+                {brandName}
+              </span>
+            )}
           </Link>
 
           {endSlot && (

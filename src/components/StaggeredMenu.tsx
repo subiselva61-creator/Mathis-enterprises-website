@@ -523,7 +523,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               {/* eslint-disable-next-line @next/next/no-img-element -- logo URL is configurable and may be non-optimized */}
               <img
                 src={logoUrl || "/src/assets/logos/reactbits-gh-white.svg"}
-                alt=""
+                alt={brandName ? `${brandName} logo` : "Site logo"}
                 className="sm-logo-img block h-8 w-auto max-h-9 shrink-0 object-contain"
                 draggable={false}
                 width={110}

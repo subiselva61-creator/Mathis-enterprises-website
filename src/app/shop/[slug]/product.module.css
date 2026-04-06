@@ -199,23 +199,39 @@
   margin: 0 0 0.5rem;
 }
 
-.specsGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-  gap: 0.35rem 1rem;
+.procurementHeading {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin: 1rem 0 0.35rem;
+}
+
+.specsTable {
+  width: 100%;
+  border-collapse: collapse;
   font-size: 14px;
   line-height: 1.35;
   color: #1d1d1f;
 }
 
-.specsGrid dt {
-  margin: 0;
-  color: #6e6e73;
-  font-weight: 400;
+.specsTable th,
+.specsTable td {
+  border-bottom: 1px solid #e8e8ed;
+  padding: 0.45rem 0.5rem 0.45rem 0;
+  text-align: left;
+  vertical-align: top;
 }
 
-.specsGrid dd {
-  margin: 0;
+.specsTable thead th {
+  font-weight: 600;
+  color: #6e6e73;
+}
+
+.specsTable tbody th {
+  font-weight: 400;
+  color: #6e6e73;
+  width: 42%;
+  padding-right: 0.75rem;
 }
 
 .imCta {

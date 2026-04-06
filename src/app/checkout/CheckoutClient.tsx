@@ -39,7 +39,6 @@ export default function CheckoutClient({ products }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [placing, setPlacing] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
-  const [emailNotes, setEmailNotes] = useState<string[]>([]);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -105,7 +104,6 @@ export default function CheckoutClient({ products }: Props) {
         setSubmitError(res.error);
         return false;
       }
-      setEmailNotes("emailNotes" in res && Array.isArray(res.emailNotes) ? res.emailNotes : []);
       setOrderId(res.orderId);
       clear();
       return true;
@@ -135,21 +133,14 @@ export default function CheckoutClient({ products }: Props) {
     return (
       <div className="mx-auto max-w-lg rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-sm">
         <h2 className="text-xl font-semibold text-neutral-900">Order received</h2>
-        <p className="mt-3 text-sm leading-relaxed text-neutral-600">
-          Thank you. Your reference number is{" "}
+        <p className="mt-3 text-sm leading-relaxed text-neutral-700">
+          Thank you for your order. Our team will contact you soon.
+        </p>
+        <p className="mt-4 text-sm leading-relaxed text-neutral-600">
+          Your reference number is{" "}
           <span className="font-mono font-medium text-neutral-900">{orderId}</span>. We will call or message you to confirm
           your order and delivery before dispatch. Payment is cash on delivery.
         </p>
-        {emailNotes.length > 0 ? (
-          <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-left text-xs leading-relaxed text-amber-950">
-            <p className="font-semibold text-amber-900">Email status</p>
-            <ul className="mt-2 list-disc space-y-1 pl-4">
-              {emailNotes.map((n, i) => (
-                <li key={i}>{n}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
         <Link href="/shop" className={cn(storefrontPillBrandCompact, "mt-8")}>
           Continue shopping
         </Link>

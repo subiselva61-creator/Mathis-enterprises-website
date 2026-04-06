@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import ForgotPasswordForm from "./ForgotPasswordForm";
+import { noindexMetadata } from "@/lib/seo-metadata";
+
+export const metadata: Metadata = noindexMetadata({
+  title: "Reset password",
+  description: "Request a password reset link for your Mathi Enterprises account.",
+});
 
 export default function ForgotPasswordPage() {
   return (

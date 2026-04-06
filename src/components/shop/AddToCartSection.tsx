@@ -6,7 +6,6 @@ import { useEffect, useLayoutEffect, useRef, useState, type ComponentProps } fro
 import type { Product } from "@/data/products";
 import ShinyText from "@/components/ShinyText";
 import { useCart } from "@/components/cart/cart-context";
-import Counter from "@/components/Counter";
 import { RippleButton, RippleButtonRipples } from "@/components/ui";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import "@/components/ui/RippleButton.css";
@@ -107,9 +106,16 @@ export default function AddToCartSection({ product }: Props) {
     window.setTimeout(() => setFlash(false), 1400);
   };
 
-  const handleIncrementQty = () => {
-    setShowGoToCart(false);
-    setQty((q) => Math.min(99, q + 1));
+  const handleQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (raw === "") { setQty(0); return; }
+    const n = parseInt(raw, 10);
+    if (Number.isNaN(n) || n < 0) return;
+    setQty(n);
+  };
+
+  const handleQtyBlur = () => {
+    if (qty < 1) setQty(1);
   };
 
   const freeSampleHref = `/contact?product=${encodeURIComponent(product.slug)}&intent=free-sample`;
@@ -139,56 +145,16 @@ export default function AddToCartSection({ product }: Props) {
         <label htmlFor={`qty-${product.id}`} className={styles.qtyLabel}>
           Quantity
         </label>
-        <div className={styles.stepper}>
-          <button
-            type="button"
-            className={styles.stepBtn}
-            aria-label="Decrease quantity"
-            onClick={() => setQty((q) => Math.max(1, q - 1))}
-          >
-            −
-          </button>
-          <div className={styles.counterSlot}>
-            <span aria-hidden="true">
-              <Counter
-                value={qty}
-                places={[10, 1]}
-                fontSize={22}
-                padding={4}
-                gap={4}
-                textColor="#171717"
-                fontWeight={600}
-                borderRadius={0}
-                horizontalPadding={2}
-                gradientFrom="#ffffff"
-                gradientTo="transparent"
-                gradientHeight={6}
-                counterStyle={{ overflow: "hidden" }}
-              />
-            </span>
-            <input
-              id={`qty-${product.id}`}
-              className={styles.srOnlyInput}
-              type="number"
-              min={1}
-              max={99}
-              value={qty}
-              onChange={(e) => {
-                const n = parseInt(e.target.value, 10);
-                if (Number.isNaN(n)) return;
-                setQty(Math.min(99, Math.max(1, n)));
-              }}
-            />
-          </div>
-          <button
-            type="button"
-            className={styles.stepBtn}
-            aria-label="Increase quantity"
-            onClick={handleIncrementQty}
-          >
-            +
-          </button>
-        </div>
+        <input
+          id={`qty-${product.id}`}
+          className={styles.qtyInput}
+          type="number"
+          min={1}
+          value={qty || ""}
+          onChange={handleQtyChange}
+          onBlur={handleQtyBlur}
+          placeholder="1"
+        />
       </div>
       {showGoToCart ? (
         <RippleButton

@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import ShopExplorer from "@/components/shop/ShopExplorer";
 import { getMergedProducts } from "@/lib/catalog";
+import { marketingPageMetadata } from "@/lib/seo-metadata";
+import { BUSINESS_NAME, PRIMARY_CITY } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Shop",
-  description:
-    "Browse construction materials, cement, TMT bars, and plots from Mathi Enterprises, Chennai — filter by category or search by name.",
-};
+const title = `Bulk construction materials supplier in ${PRIMARY_CITY} | ${BUSINESS_NAME}`;
+const description = `Browse wholesale cement, steel, bricks, sand, aggregates, and more from ${BUSINESS_NAME} in ${PRIMARY_CITY}. Filter by category or search — indicative IndiaMART-linked rates; confirm construction procurement details before you order.`;
+
+export const metadata: Metadata = marketingPageMetadata({
+  title,
+  description,
+  path: "/shop",
+  keywords: ["construction materials catalog", "bulk supplier Chennai", "wholesale building materials shop"],
+});
 
 type Props = {
   searchParams?: Promise<{ cat?: string; q?: string }>;

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Product } from "@/data/products";
 import { storefrontPillApplePrimary } from "@/lib/storefront-styles";
 import { cn } from "@/lib/utils";
+import { productPhotoAlt } from "@/lib/site";
 
 const AUTOPLAY_MS = 6000;
 
@@ -208,7 +209,7 @@ export default function MaterialsCarousel({
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[28px] bg-white">
                   <Image
                     src={img}
-                    alt={product.name}
+                    alt={productPhotoAlt(product, "card")}
                     fill
                     className="object-contain object-center p-3"
                     sizes="85vw"

@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import { ContactPageClient } from "./ContactPageClient";
+import { GST_NUMBER, PHONE_DISPLAY } from "@/app/contact/contact-constants";
+import { marketingPageMetadata } from "@/lib/seo-metadata";
+import { BUSINESS_NAME, PRIMARY_CITY } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Call +91 7845583158 or reach Mathi Enterprises for construction material quotes — Chennai, Tamil Nadu. GST 33ACPPV8797A2ZX.",
-};
+const title = `Contact ${BUSINESS_NAME} — bulk quotes in ${PRIMARY_CITY}`;
+const description = `Call ${PHONE_DISPLAY} for wholesale construction materials, bulk cement, steel, and aggregates in ${PRIMARY_CITY}. GST ${GST_NUMBER}. IndiaMART quotes and project supply chain support.`;
+
+export const metadata: Metadata = marketingPageMetadata({
+  title,
+  description,
+  path: "/contact",
+  keywords: ["Mathi Enterprises contact", "bulk cement quote Chennai", "construction materials phone"],
+});
 
 export default function ContactPage() {
   return (

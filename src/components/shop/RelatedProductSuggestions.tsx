@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/data/products";
 import { formatProductPrice } from "@/lib/format";
+import { productPhotoAlt } from "@/lib/site";
 import styles from "./RelatedProductSuggestions.module.css";
 
 const M20_READY_MIX_SLUG = "m-20-construction-ready-mix-concrete";
@@ -28,7 +29,7 @@ export default function RelatedProductSuggestions({ products }: Props) {
           const image = img ? (
             <Image
               src={img}
-              alt=""
+              alt={productPhotoAlt(p, "related")}
               fill
               className={styles.image}
               sizes="64px"

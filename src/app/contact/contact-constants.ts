@@ -1,5 +1,10 @@
 import { INDIAMART_BASE } from "@/data/catalog/constants";
 
+/** Single-line lines for NAP / schema (extend with street when available from Google Business). */
+export const ADDRESS_LINES = ["Chennai", "Tamil Nadu", "India"] as const;
+
+export const GST_NUMBER = "33ACPPV8797A2ZX";
+
 export const IM_URL = `${INDIAMART_BASE}/`;
 
 /** Opens the same place as the public short link (maps.app.goo.gl/…). */

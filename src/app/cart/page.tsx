@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import CartView from "@/components/cart/CartView";
 import { getMergedProducts } from "@/lib/catalog";
+import { noindexMetadata } from "@/lib/seo-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = noindexMetadata({
   title: "Cart",
   description: "Review your bag and proceed to cash-on-delivery checkout.",
-};
+});
 
 export default async function CartPage() {
   const products = await getMergedProducts();

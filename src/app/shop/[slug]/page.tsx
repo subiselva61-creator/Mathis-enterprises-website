@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import AddToCartSection from "@/components/shop/AddToCartSection";
 import RelatedProductSuggestions from "@/components/shop/RelatedProductSuggestions";
+import ProductJsonLd from "@/components/seo/ProductJsonLd";
 import { staticProductSlugs } from "@/data/products";
 import { getMergedProductBySlug, getRelatedProductsInCategory } from "@/lib/catalog";
 import { formatProductPrice } from "@/lib/format";
+import { marketingPageMetadata } from "@/lib/seo-metadata";
+import { absoluteUrl, BUSINESS_NAME, PRIMARY_CITY, productPhotoAlt } from "@/lib/site";
 import styles from "./product.module.css";
 
 const RED_PARTITION_BRICK_SLUG = "rectangular-red-partition-wall-bricks";
@@ -20,16 +22,17 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = await getMergedProductBySlug(slug);
-  if (!product) return { title: "Product" };
-  return {
-    title: product.name,
-    description: product.description.slice(0, 155),
-    openGraph: {
-      title: product.name,
-      description: product.description,
-      images: product.images[0] ? [{ url: product.images[0] }] : undefined,
-    },
-  };
+  if (!product) return { title: { absolute: "Product · Mathi Enterprises" } };
+  const title = `Bulk ${product.name} supplier in ${PRIMARY_CITY} | ${BUSINESS_NAME}`;
+  const description =
+    product.description.length > 155 ? `${product.description.slice(0, 152).trim()}…` : product.description;
+  const ogImage = product.images[0] ? absoluteUrl(product.images[0]) : undefined;
+  return marketingPageMetadata({
+    title,
+    description,
+    path: `/shop/${slug}`,
+    ...(ogImage ? { ogImage } : {}),
+  });
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -44,6 +47,7 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className={isRedPartitionBrickHero ? styles.pageBrick : styles.page}>
+      <ProductJsonLd product={product} />
       {isRedPartitionBrickHero ? (
         <section className={styles.appleHeroBrick} aria-labelledby="red-brick-hero-title">
           <h1 id="red-brick-hero-title" className={styles.appleHeroTitle}>
@@ -53,7 +57,7 @@ export default async function ProductPage({ params }: Props) {
           <div className={styles.appleHeroFigure} data-scroll-pdp-hero>
             <Image
               src="/red-bricks-2.png"
-              alt="Rectangular red partition wall bricks presented for construction use"
+              alt={productPhotoAlt({ name: "Rectangular red partition wall bricks" }, "main")}
               width={1400}
               height={900}
               priority
@@ -73,7 +77,7 @@ export default async function ProductPage({ params }: Props) {
               <div className={styles.heroImagePad}>
                 <Image
                   src={primary}
-                  alt={`${product.name} — main product photo`}
+                  alt={productPhotoAlt(product, "main")}
                   fill
                   className={styles.image}
                   sizes="(max-width: 900px) 100vw, 50vw"
@@ -83,13 +87,13 @@ export default async function ProductPage({ params }: Props) {
             </div>
             {rest.length > 0 ? (
               <ul className={styles.thumbs} aria-label="More product images">
-                {rest.map((src, i) => (
+                {rest.map((src, thumbIdx) => (
                   <li key={src} className={styles.thumbItem}>
                     <div className={styles.thumb}>
                       <div className={styles.thumbPad}>
                         <Image
                           src={src}
-                          alt={`${product.name} — detail ${i + 2}`}
+                          alt={`${productPhotoAlt(product, "detail")} — view ${thumbIdx + 2}`}
                           fill
                           className={styles.image}
                           sizes="120px"
@@ -109,7 +113,7 @@ export default async function ProductPage({ params }: Props) {
         >
           <p className={styles.category}>{product.category}</p>
           {isRedPartitionBrickHero ? (
-            <h2 className="sr-only">{product.name}</h2>
+            <p className={styles.title}>{product.name}</p>
           ) : (
             <h1 className={styles.title}>{product.name}</h1>
           )}
@@ -119,6 +123,7 @@ export default async function ProductPage({ params }: Props) {
               <span className={styles.priceValue}> / {product.priceBasis.toLowerCase()}</span>
             ) : null}
           </p>
+          <h2 className={styles.procurementHeading}>Bulk procurement &amp; pricing</h2>
           {product.priceOnRequest ? (
             <p className={styles.priceNote}>Contact us on IndiaMART for the latest availability and a formal quote.</p>
           ) : (
@@ -130,15 +135,24 @@ export default async function ProductPage({ params }: Props) {
           <p className={styles.desc}>{product.description}</p>
           {product.specs && product.specs.length > 0 ? (
             <div className={styles.specs}>
-              <h2 className={styles.specsTitle}>Specifications</h2>
-              <dl className={styles.specsGrid}>
-                {product.specs.map((s, i) => (
-                  <Fragment key={`${s.label}-${i}`}>
-                    <dt>{s.label}</dt>
-                    <dd>{s.value}</dd>
-                  </Fragment>
-                ))}
-              </dl>
+              <h2 className={styles.specsTitle}>Technical specifications</h2>
+              <table className={styles.specsTable}>
+                <caption className="sr-only">Technical specifications for {product.name}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Specification</th>
+                    <th scope="col">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {product.specs.map((s, i) => (
+                    <tr key={`${s.label}-${i}`}>
+                      <th scope="row">{s.label}</th>
+                      <td>{s.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           ) : null}
           <p className={styles.imCta}>
