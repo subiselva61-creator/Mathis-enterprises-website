@@ -7,6 +7,8 @@ import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useSta
 import { Search, ShoppingBag, User, X } from "lucide-react";
 import { gsap } from "gsap";
 import StaggeredMenu from "@/components/StaggeredMenu";
+import CardNav from "@/components/ui/CardNav";
+import type { CardNavItem } from "@/components/ui/CardNav";
 import { useCart } from "@/components/cart/cart-context";
 import { useSupabaseUser } from "@/hooks/useSupabaseUser";
 import { cn } from "@/lib/utils";
@@ -479,7 +481,54 @@ export default function SiteHeader() {
     [isSignedIn, isReady, itemCount]
   );
 
+  const cardNavItems: CardNavItem[] = useMemo(
+    () => [
+      {
+        label: "Products",
+        bgColor: "#0D0716",
+        textColor: "#fff",
+        links: [
+          { label: "Bricks", href: "/bricks", ariaLabel: "View brick products" },
+          { label: "Aggregates", href: "/aggregates", ariaLabel: "View aggregate products" },
+          { label: "Sand", href: "/sand", ariaLabel: "View sand products" },
+          { label: "Cement", href: "/cement", ariaLabel: "View cement products" },
+        ],
+      },
+      {
+        label: "Shop",
+        bgColor: "#170D27",
+        textColor: "#fff",
+        links: [
+          { label: "Catalog", href: "/shop", ariaLabel: "Browse the catalog" },
+          {
+            label: "IndiaMART",
+            href: "https://www.indiamart.com/mathi-enterprises-tamilnadu/",
+            ariaLabel: "Mathi Enterprises on IndiaMART",
+            external: true,
+          },
+        ],
+      },
+      {
+        label: "Contact",
+        bgColor: "#271E37",
+        textColor: "#fff",
+        links: [
+          { label: "Get in touch", href: "/contact", ariaLabel: "Contact Mathi Enterprises" },
+        ],
+      },
+    ],
+    [],
+  );
+
   const mobileEndSlot = (
+    <>
+      <SearchOpenButton onOpen={() => setSearchOpen(true)} />
+      <UserNavLink isSignedIn={isSignedIn} />
+      <CartBadgeLink />
+    </>
+  );
+
+  const desktopEndSlot = (
     <>
       <SearchOpenButton onOpen={() => setSearchOpen(true)} />
       <UserNavLink isSignedIn={isSignedIn} />
@@ -514,65 +563,18 @@ export default function SiteHeader() {
         />
       </div>
 
-      {/* Desktop: unchanged centered nav + icons */}
-      <header
-        className={cn(
-          "fixed left-0 right-0 top-0 z-[100] hidden h-11 border-b border-black/[0.08] bg-[rgba(251,251,253,0.82)] backdrop-blur-xl supports-[backdrop-filter]:bg-[rgba(251,251,253,0.72)] lg:flex md:h-12"
-        )}
-      >
-        <div className="relative mx-auto flex h-full w-full max-w-[1120px] items-center justify-between px-4 lg:px-6 xl:px-8">
-          <Link
-            href="/"
-            className="relative z-[110] flex min-w-0 max-w-[min(100%,20rem)] shrink-0 items-center gap-2 opacity-90 transition hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0071e3]"
-            aria-label={`${BRAND_NAME} home`}
-          >
-            <Image
-              src="/logo.png"
-              alt=""
-              width={28}
-              height={28}
-              className="h-5 w-5 shrink-0 rounded-sm object-cover md:h-[22px] md:w-[22px]"
-              priority
-            />
-            <span className="truncate text-[13px] font-semibold leading-tight tracking-tight text-[#1d1d1f] md:text-sm">
-              {BRAND_NAME}
-            </span>
-          </Link>
-
-          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 lg:block" aria-label="Main">
-            <ul className="flex items-center gap-7 xl:gap-8">
-              {centerNav.map(({ href, label, external }) => (
-                <li key={`${href}-${label}`}>
-                  {external ? (
-                    <a
-                      href={href}
-                      className="whitespace-nowrap text-[12px] font-normal tracking-tight text-[#1d1d1f] opacity-90 transition-opacity duration-200 hover:opacity-100"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={href}
-                      className={desktopNavLinkClass(isDesktopNavActive(pathname, href))}
-                      aria-current={isDesktopNavActive(pathname, href) ? "page" : undefined}
-                    >
-                      {label}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div className="relative z-[110] flex items-center gap-1 md:gap-2">
-            <SearchOpenButton onOpen={() => setSearchOpen(true)} />
-            <UserNavLink isSignedIn={isSignedIn} />
-            <CartBadgeLink />
-          </div>
-        </div>
-      </header>
+      {/* Desktop: CardNav floating pill with expandable cards */}
+      <div className="hidden lg:block">
+        <CardNav
+          logo="/logo.png"
+          logoAlt={`${BRAND_NAME} logo`}
+          items={cardNavItems}
+          baseColor="#fff"
+          menuColor="#000"
+          ease="power3.out"
+          endSlot={desktopEndSlot}
+        />
+      </div>
     </>
   );
 }
