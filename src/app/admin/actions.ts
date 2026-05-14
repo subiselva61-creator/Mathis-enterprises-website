@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { isAllowlistedAdminEmail } from "@/lib/admin-auth";
 import { createServiceRoleClient } from "@/lib/supabase/service";
@@ -65,7 +65,9 @@ export async function saveProductOverride(_prev: SaveOverrideState, formData: Fo
     const { error } = await service.from("product_overrides").upsert(payload, { onConflict: "product_id" });
     if (error) return { error: error.message };
 
-    revalidateTag("catalog", "max");
+    // Must use updateTag here (Server Action): revalidateTag(..., "max") uses a long-lived cache profile that does *not*
+    // mark routes for full static+dynamic refresh, so the storefront can keep stale RSC/ISR output until redeploy.
+    updateTag("catalog");
     return { ok: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Save failed";
@@ -82,7 +84,7 @@ export async function deleteProductOverride(productId: string): Promise<SimpleAc
     if (!service) return { error: "SUPABASE_SERVICE_ROLE_KEY is not set" };
     const { error } = await service.from("product_overrides").delete().eq("product_id", productId);
     if (error) return { error: error.message };
-    revalidateTag("catalog", "max");
+    updateTag("catalog");
     return { ok: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Delete failed";
